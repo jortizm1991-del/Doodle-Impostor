@@ -1,0 +1,1928 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#fff8ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Doodle Impostor</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='88'>🕵️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fff8ec; --ink:#2a2238; --muted:#776d86; --line:#eadcc6; --card:#ffffff;
+  --red:#ff5a3c; --red-d:#cf3a1f; --teal:#14a68c; --teal-d:#0c7a66; --imp:#7b4dff; --imp-d:#5530d6;
+  --gold:#ffbf2e; --shadow:0 3px 0 rgba(42,34,56,.10); color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--paper) radial-gradient(rgba(42,34,56,.07) 1px,transparent 1.3px) 0 0/18px 18px;color:var(--ink);
+  font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent;overscroll-behavior:none;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea{-webkit-user-select:text;user-select:text}
+h1,h2,h3,.big,.code,.btn,.timer,.word,.seg button,.logo{font-family:"Baloo 2",system-ui,sans-serif}
+h1{font-size:34px;line-height:1.05;margin:6px 0 4px}
+h2{font-size:24px;line-height:1.15;margin:4px 0 8px}
+h3{font-size:18px;margin:2px 0 6px}
+p{margin:6px 0}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.center{text-align:center}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top)) 14px 8px;
+  background:rgba(255,248,236,.94);backdrop-filter:blur(6px);border-bottom:2px solid var(--line)}
+#me{font-weight:800;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:"Baloo 2",system-ui;font-size:19px}
+#right{display:flex;gap:6px;align-items:center}
+main{max-width:560px;margin:0 auto;padding:12px 16px calc(30px + env(safe-area-inset-bottom))}
+body.tv main{max-width:1180px}
+.btn{display:block;width:100%;border:0;border-radius:16px;padding:11px 16px;font-size:21px;font-weight:800;color:#fff;background:var(--red);
+  box-shadow:0 4px 0 var(--red-d);cursor:pointer;margin:10px 0;touch-action:manipulation;line-height:1.2}
+.btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--red-d)}
+.btn.teal{background:var(--teal);box-shadow:0 4px 0 var(--teal-d)}
+.btn.imp{background:var(--imp);box-shadow:0 4px 0 var(--imp-d)}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:0 4px 0 var(--line);border:2px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.sm{font-size:16px;padding:7px 12px;border-radius:12px;width:auto;display:inline-block;margin:4px 0}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{flex:1}
+.icon{border:2px solid var(--line);background:#fff;border-radius:12px;min-width:38px;height:38px;font-size:18px;cursor:pointer;padding:0 8px;color:var(--ink);line-height:1}
+.dot{width:10px;height:10px;border-radius:50%;background:#bbb;display:inline-block;flex:none}
+.dot.ok{background:#2fbf5b}.dot.bad{background:#e8322c}
+.card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
+.logo{font-size:44px;font-weight:800;line-height:1;margin:18px 0 2px;text-align:center}
+.logo span{display:inline-block;transform:rotate(-3deg);color:var(--red)}
+.logo b{display:inline-block;transform:rotate(2deg);color:var(--imp)}
+.tag{text-align:center;color:var(--muted);margin:2px 0 14px}
+label.f{display:block;font-weight:700;margin:10px 0 4px}
+input.t,textarea.t{width:100%;font:inherit;font-size:20px;padding:11px 14px;border-radius:14px;border:2px solid var(--line);background:#fff;color:var(--ink);outline:none}
+input.t:focus,textarea.t:focus{border-color:var(--teal)}
+input.code-in{text-transform:uppercase;letter-spacing:6px;text-align:center;font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;font-size:30px}
+textarea.t{font-size:16px;min-height:90px}
+.code{font-size:46px;font-weight:800;letter-spacing:7px;line-height:1;text-align:center}
+.qr{display:block;margin:8px auto;width:190px;height:190px;background:#fff;border-radius:10px}
+body.tv .qr{width:300px;height:300px}
+.qr svg{display:block;width:100%;height:100%}
+.players{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:4px 10px 4px 4px;font-weight:700}
+.chip.off{opacity:.45}
+.chip .x{border:0;background:none;font-size:16px;color:var(--muted);cursor:pointer;padding:0 2px}
+.av{width:28px;height:28px;border-radius:50%;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none;font-family:"Baloo 2",system-ui,sans-serif}
+.seg{display:flex;background:#f3ead9;border-radius:12px;padding:3px;gap:3px;flex-wrap:wrap}
+.seg button{flex:1;border:0;background:none;border-radius:9px;padding:6px 6px;font-weight:700;font-size:16px;color:var(--ink);cursor:pointer;min-width:44px}
+.seg button.on{background:#fff;box-shadow:0 2px 0 var(--line)}
+.seg button:disabled{cursor:default}
+select.t{width:100%;font:inherit;font-size:17px;padding:9px 10px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--ink)}
+.set{display:grid;grid-template-columns:1fr;gap:4px}
+.set .k{font-weight:700;font-size:15px;margin-top:8px}
+.seg{flex-wrap:nowrap}
+.btn{scroll-margin:90px}
+.summary{display:flex;flex-wrap:wrap;gap:6px}
+.summary span{background:#f3ead9;border-radius:10px;padding:3px 9px;font-size:14px;font-weight:600}
+/* secret card */
+.secret{position:relative;min-height:220px;border-radius:24px;background:#2a2238;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:20px;cursor:pointer;touch-action:none;margin:12px 0;box-shadow:0 5px 0 #15101e}
+.secret .cover{font-family:"Baloo 2",system-ui,sans-serif;font-size:24px;font-weight:800}
+.secret .word{font-size:46px;font-weight:800;line-height:1;margin:6px 0;color:#ffd84a;word-break:break-word}
+.secret .lbl{opacity:.8;font-size:15px}
+.peek{display:flex;align-items:center;justify-content:center;gap:8px;background:#2a2238;color:#fff;border-radius:14px;padding:9px 12px;margin:10px 0;
+  font-weight:700;cursor:pointer;touch-action:none;min-height:44px;text-align:center}
+.peek b{color:#ffd84a}
+/* drawing */
+.turnbar{display:flex;align-items:center;gap:10px;margin:2px 0 6px}
+.turnbar .who{flex:1;font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;font-size:22px;line-height:1.1}
+.timer{font-size:30px;font-weight:800;min-width:48px;text-align:right}
+.timer.low{color:var(--red)}
+.tbar{height:9px;border-radius:9px;background:#efe3cf;overflow:hidden;margin:2px 0 8px}
+.tbar i{display:block;height:100%;background:var(--teal);width:100%;transition:width .2s linear}
+.tbar.low i{background:var(--red)}
+.order{display:flex;gap:4px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}
+.order .av{width:30px;height:30px;opacity:.35;border:3px solid transparent}
+.order .av.now{opacity:1;border-color:var(--ink);transform:scale(1.1)}
+.order .av.done{opacity:.9}
+.boardwrap{position:relative;background:#fff;border-radius:18px;border:3px solid var(--ink);overflow:hidden;box-shadow:0 4px 0 rgba(42,34,56,.15);aspect-ratio:1}
+.boardwrap canvas{display:block;width:100%;height:100%;touch-action:none}
+.boardwrap.mine{border-color:var(--teal)}
+.boardwrap .over{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.7);font-family:"Baloo 2",system-ui,sans-serif;font-size:26px;font-weight:800;text-align:center;padding:20px}
+body.tv .boardwrap{max-width:calc(100vh - 230px);margin:0 auto}
+body.tv .drawgrid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start}
+.tools{display:flex;gap:6px;margin:10px 0 6px}
+.tools button{flex:1;height:46px;border-radius:12px;border:2px solid var(--line);background:#fff;font-size:22px;cursor:pointer;touch-action:manipulation;color:var(--ink)}
+.tools button.on{border-color:var(--ink);background:#fff3c4}
+.colors{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.colors button{aspect-ratio:1;border-radius:50%;border:2px solid rgba(0,0,0,.15);cursor:pointer;touch-action:manipulation;padding:0}
+.colors button.on{outline:3px solid var(--ink);outline-offset:2px}
+.sizes{display:flex;gap:6px;margin-top:8px}
+.sizes button{flex:1;height:42px;border-radius:12px;border:2px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation}
+.sizes button.on{border-color:var(--ink);background:#fff3c4}
+.sizes i{display:block;border-radius:50%;background:var(--ink)}
+.gal{display:flex;gap:8px;overflow-x:auto;padding:4px 0;scrollbar-width:thin}
+.thumb{flex:none;width:96px;text-align:center;font-size:13px;font-weight:700;cursor:pointer}
+.thumb img,.thumb .ph{display:block;width:96px;height:96px;border-radius:12px;border:2px solid var(--line);background:#fff;object-fit:cover}
+.thumb .ph{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:24px}
+.thumb span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+body.tv .thumb{width:140px} body.tv .thumb img, body.tv .thumb .ph{width:140px;height:140px}
+/* vote */
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+body.tv .vgrid{grid-template-columns:repeat(4,1fr)}
+.vcard{background:#fff;border:3px solid var(--line);border-radius:18px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.vcard.pick{border-color:var(--red);background:#fff1ec}
+.vcard .nm{display:flex;align-items:center;gap:6px;font-weight:800;min-width:0}
+.vcard .nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vcard .pics{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.vcard .pics.one{grid-template-columns:1fr}
+.vcard .pics img,.vcard .pics .ph{width:100%;aspect-ratio:1;border-radius:10px;border:2px solid var(--line);background:#fff;cursor:zoom-in;display:block}
+.vcard .pics .ph{display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.vcard .btn{margin:2px 0 0;font-size:17px;padding:7px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.choices .btn{margin:0;font-size:18px;padding:10px 6px;text-transform:none}
+.choices .btn.right{background:var(--teal);box-shadow:0 4px 0 var(--teal-d);opacity:1}
+.choices .btn.wrong{background:#8b8494;box-shadow:0 4px 0 #625b6b;opacity:1}
+/* results */
+.reveal{text-align:center;border-radius:24px;padding:18px 14px;color:#fff;background:var(--imp);box-shadow:0 5px 0 var(--imp-d);margin:10px 0}
+.reveal.crew{background:var(--teal);box-shadow:0 5px 0 var(--teal-d)}
+.reveal.none{background:#8b8494;box-shadow:0 5px 0 #625b6b}
+.reveal .big{font-size:30px;font-weight:800;line-height:1.1}
+.reveal .w{display:inline-block;background:rgba(255,255,255,.2);border-radius:12px;padding:2px 12px;font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;font-size:26px;margin-top:6px}
+.score{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:2px dashed var(--line)}
+.score:last-child{border-bottom:0}
+.score .n{flex:1;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.score .p{font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;font-size:22px}
+.score .g{font-weight:800;color:var(--teal);min-width:34px;text-align:right}
+.votes{font-size:15px;line-height:1.7}
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:8px;margin:18px 0 6px}
+.podium>div{flex:1;max-width:120px;line-height:1.2;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;text-align:center;border-radius:14px 14px 0 0;color:#fff;padding:8px 4px;font-weight:800;font-family:"Baloo 2",system-ui,sans-serif}
+.podium .n{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:14px;z-index:50;
+  font-weight:700;max-width:90vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.banner{background:#fff3c4;border:2px solid #f1d77a;border-radius:14px;padding:8px 12px;margin:8px 0;font-weight:600;font-size:15px}
+.modal{position:fixed;inset:0;background:rgba(30,24,40,.55);z-index:40;display:flex;align-items:center;justify-content:center;padding:18px}
+.modal .box{background:var(--paper);border-radius:22px;padding:14px;width:100%;max-width:520px;max-height:92vh;overflow:auto}
+.modal img{width:100%;border-radius:14px;border:2px solid var(--line);background:#fff;display:block}
+.rules li{margin:4px 0}
+.hint{font-size:14px;color:var(--muted);text-align:center;margin:4px 0}
+.wobble{animation:wob 1.2s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+.pulse{animation:pul 1s ease-in-out infinite}
+@keyframes pul{50%{transform:scale(1.06)}}
+</style>
+</head>
+<body>
+<header><div id="me">🕵️ Doodle Impostor</div><div id="right"></div></header>
+<main id="main"></main>
+<script>
+"use strict";
+// =====================================================================
+//  Doodle Impostor — one-file party drawing game.
+//  One phone hosts; everyone else joins with a room code. Messages go
+//  through a public MQTT-over-WebSocket relay, so no server is needed.
+// =====================================================================
+
+// ---------------------------------------------------------------------
+//  Text (English / Spanish)
+// ---------------------------------------------------------------------
+const T = {
+  en: {
+    title: "Doodle Impostor",
+    tagline: "Everyone draws a clue. One of you has no idea what the word is.",
+    host: "Host a game", join: "Join a game", roomCode: "Room code", yourName: "Your name",
+    namePh: "Type your name", joinBtn: "Join", create: "Create room", back: "Back",
+    tvMode: "Use this device as a big screen (not a player)",
+    howTo: "How to play",
+    rules: [
+      "Everyone gets the same secret word — except the 🕵️ impostor, who only sees the category.",
+      "Take turns drawing something RELATED to the word (not the word itself) in 30 seconds. Everyone watches each drawing appear live.",
+      "The impostor watches, figures out the word, and draws something that fits in.",
+      "Talk it over and vote for who you think the impostor is.",
+      "If the impostor is caught, they get one last chance to guess the word and steal the win!",
+    ],
+    scoring: "Points: +1 for voting for the impostor · +1 for everyone if the crew wins · Impostor +3 for escaping, +2 for a correct last-second guess.",
+    resumeHost: "Resume hosting room {code}", resumeJoin: "Rejoin room {code}", forget: "Forget",
+    connecting: "Connecting…", findingRoom: "Looking for room {code}…",
+    cantFind: "Can't find that room yet. Check the code, and that the host's screen is open.",
+    keepTrying: "Still trying…",
+    lobby: "Waiting for players", shareHint: "Scan to join, or go to this page and type the code.",
+    copyLink: "Copy link", share: "Share link", linkCopied: "Link copied",
+    players: "Players", need3: "You need at least 3 players.", start: "Start game",
+    waitHost: "Waiting for the host to start…",
+    settings: "Settings", category: "Words", mix: "Mix of everything", custom: "My own words",
+    customHint: "Type words separated by commas or new lines (at least 8 is best).",
+    customN: "{n} custom words", drawTime: "Draw time", turns: "Turns each", auto: "Auto", rounds: "Rounds", endless: "∞",
+    hint: "Impostor sees category", on: "On", off: "Off", language: "Language", sec: "{n}s",
+    youHost: "host", you: "you",
+    round: "Round {n}", roundOf: "Round {n} of {m}",
+    holdSecret: "Press & hold to see your secret 👆", holdPeek: "👁 Hold to peek at your secret",
+    secretWord: "Your secret word", category2: "Category: {c}", noCat: "No hint this time!",
+    youImp: "🕵️ You are the IMPOSTOR",
+    crewTip: "Draw something RELATED to it — not the word itself. No letters!",
+    impTip: "Watch the others' drawings, figure out the word, and blend in!",
+    ready: "I'm ready", readyWait: "Waiting for everyone… ({n}/{m} ready)", startDrawing: "Start drawing now",
+    gettingSecret: "Getting your secret…",
+    yourTurn: "Your turn! 🎨", isDrawing: "{name} is drawing…", upNext: "Up next: {name}", youNext: "You're next — get ready!",
+    done: "Done ✓", timesUp: "Time's up!", skipped: "skipped", turnN: "Turn {n}/{m}",
+    drawingsSoFar: "Drawings so far", noDrawings: "No drawings yet — first one coming up!",
+    tools: { pen: "Pen", fill: "Fill", eraser: "Eraser", undo: "Undo", clear: "Clear" },
+    voteTitle: "Who's the impostor? 🕵️", voteSub: "Talk it over out loud, then vote.",
+    revote: "It's a tie! Vote again between: {names}",
+    vote: "Vote", voted: "Voted ✓", yourCard: "That's you",
+    votesIn: "{n}/{m} votes in", revealVotes: "Reveal votes now", waitVotes: "Waiting for votes…",
+    notInRound: "You're watching this round",
+    caught: "{name} got caught!", lastChance: "Last chance! What's the secret word?",
+    guessing: "{name} was voted out and is the impostor! Can they guess the word?",
+    crewWins: "Crew wins! 🎉", impSteal: "Impostor steals the win! 🕵️",
+    innocent: "{name} was innocent! 😱", tieEscape: "Nobody was voted out! 🤷",
+    impWas: "The impostor was {name}", wordWas: "The word was", guessed: "{name} guessed: {w}",
+    noGuess: "{name} ran out of time to guess",
+    aborted: "Round cancelled", abortImp: "The impostor left the game.", abortFew: "Not enough players left.",
+    votesList: "Who voted for whom", noVote: "no vote", impDrawings: "The impostor's drawings",
+    scores: "Scores", nextRound: "Next round ▶", finalResults: "Final results 🏆", endGame: "End game",
+    waitNext: "Waiting for the host…", gameOver: "Game over!", playAgain: "Play again", winner: "{name} wins!",
+    tie2: "It's a tie!",
+    menu: "Menu", skipTurn: "Skip this turn", skipRound: "Skip this round (no points)", leave: "Leave game",
+    leaveConfirm: "Leave this game?", endConfirm: "End the game now and show final scores?",
+    removeConfirm: "Remove {name} from the game?", removed: "You were removed from the game.",
+    full: "This room is full (12 players).", hostBack: "Reconnecting to the host…",
+    newPlayer: "You joined mid-round — you'll play next round. Enjoy the show!",
+    tvLobby: "Big screen", close: "Close", sound: "Sound",
+    relayNote: "Each phone needs internet. Drawings and names pass through a free public relay.",
+    nameTaken: "Pick a name", hostFallback: "Trying another relay…",
+    customCat: "Custom", resumeOld: "Room {code} has ended.",
+  },
+  es: {
+    title: "Impostor de Garabatos",
+    tagline: "Todos dibujan una pista. Uno de ustedes no tiene idea de cuál es la palabra.",
+    host: "Crear partida", join: "Unirme a una partida", roomCode: "Código de sala", yourName: "Tu nombre",
+    namePh: "Escribe tu nombre", joinBtn: "Entrar", create: "Crear sala", back: "Atrás",
+    tvMode: "Usar este dispositivo como pantalla grande (sin jugar)",
+    howTo: "Cómo se juega",
+    rules: [
+      "Todos reciben la misma palabra secreta, menos el 🕵️ impostor, que solo ve la categoría.",
+      "Por turnos, dibujen algo RELACIONADO con la palabra (no la palabra misma) en 30 segundos. Todos ven cada dibujo en vivo.",
+      "El impostor observa, intenta adivinar la palabra y dibuja algo que encaje.",
+      "Hablen y voten por quien creen que es el impostor.",
+      "Si atrapan al impostor, tiene una última oportunidad: ¡si adivina la palabra, se roba la victoria!",
+    ],
+    scoring: "Puntos: +1 por votar al impostor · +1 para todos si gana el equipo · Impostor +3 si escapa, +2 si adivina al final.",
+    resumeHost: "Seguir siendo anfitrión de {code}", resumeJoin: "Volver a la sala {code}", forget: "Olvidar",
+    connecting: "Conectando…", findingRoom: "Buscando la sala {code}…",
+    cantFind: "Aún no encontramos esa sala. Revisa el código y que la pantalla del anfitrión esté abierta.",
+    keepTrying: "Seguimos intentando…",
+    lobby: "Esperando jugadores", shareHint: "Escanea para entrar, o abre esta página y escribe el código.",
+    copyLink: "Copiar enlace", share: "Compartir enlace", linkCopied: "Enlace copiado",
+    players: "Jugadores", need3: "Necesitan al menos 3 jugadores.", start: "Empezar",
+    waitHost: "Esperando a que el anfitrión empiece…",
+    settings: "Ajustes", category: "Palabras", mix: "De todo un poco", custom: "Mis propias palabras",
+    customHint: "Escribe palabras separadas por comas o en líneas nuevas (mejor 8 o más).",
+    customN: "{n} palabras propias", drawTime: "Tiempo", turns: "Turnos c/u", auto: "Auto", rounds: "Rondas", endless: "∞",
+    hint: "Impostor ve la categoría", on: "Sí", off: "No", language: "Idioma", sec: "{n}s",
+    youHost: "anfitrión", you: "tú",
+    round: "Ronda {n}", roundOf: "Ronda {n} de {m}",
+    holdSecret: "Mantén presionado para ver tu secreto 👆", holdPeek: "👁 Mantén presionado para ver tu secreto",
+    secretWord: "Tu palabra secreta", category2: "Categoría: {c}", noCat: "¡Esta vez sin pista!",
+    youImp: "🕵️ Eres el IMPOSTOR",
+    crewTip: "Dibuja algo RELACIONADO, no la palabra misma. ¡Sin letras!",
+    impTip: "Mira los dibujos de los demás, adivina la palabra y ¡disimula!",
+    ready: "Estoy listo", readyWait: "Esperando a todos… ({n}/{m} listos)", startDrawing: "Empezar a dibujar ya",
+    gettingSecret: "Recibiendo tu secreto…",
+    yourTurn: "¡Tu turno! 🎨", isDrawing: "{name} está dibujando…", upNext: "Sigue: {name}", youNext: "¡Sigues tú, prepárate!",
+    done: "Listo ✓", timesUp: "¡Se acabó el tiempo!", skipped: "saltado", turnN: "Turno {n}/{m}",
+    drawingsSoFar: "Dibujos hasta ahora", noDrawings: "Aún no hay dibujos. ¡Ya viene el primero!",
+    tools: { pen: "Lápiz", fill: "Rellenar", eraser: "Borrador", undo: "Deshacer", clear: "Borrar todo" },
+    voteTitle: "¿Quién es el impostor? 🕵️", voteSub: "Discútanlo en voz alta y luego voten.",
+    revote: "¡Empate! Voten otra vez entre: {names}",
+    vote: "Votar", voted: "Votado ✓", yourCard: "Eres tú",
+    votesIn: "{n}/{m} votos", revealVotes: "Revelar votos ya", waitVotes: "Esperando votos…",
+    notInRound: "Estás mirando esta ronda",
+    caught: "¡Atraparon a {name}!", lastChance: "¡Última oportunidad! ¿Cuál es la palabra secreta?",
+    guessing: "¡Expulsaron a {name} y es el impostor! ¿Podrá adivinar la palabra?",
+    crewWins: "¡Gana el equipo! 🎉", impSteal: "¡El impostor se roba la victoria! 🕵️",
+    innocent: "¡{name} era inocente! 😱", tieEscape: "¡Nadie fue expulsado! 🤷",
+    impWas: "El impostor era {name}", wordWas: "La palabra era", guessed: "{name} eligió: {w}",
+    noGuess: "A {name} se le acabó el tiempo",
+    aborted: "Ronda cancelada", abortImp: "El impostor salió del juego.", abortFew: "No quedan suficientes jugadores.",
+    votesList: "Quién votó por quién", noVote: "sin voto", impDrawings: "Los dibujos del impostor",
+    scores: "Puntos", nextRound: "Siguiente ronda ▶", finalResults: "Resultados finales 🏆", endGame: "Terminar juego",
+    waitNext: "Esperando al anfitrión…", gameOver: "¡Fin del juego!", playAgain: "Jugar otra vez", winner: "¡Gana {name}!",
+    tie2: "¡Empate!",
+    menu: "Menú", skipTurn: "Saltar este turno", skipRound: "Saltar esta ronda (sin puntos)", leave: "Salir del juego",
+    leaveConfirm: "¿Salir de esta partida?", endConfirm: "¿Terminar el juego ahora y ver los puntos finales?",
+    removeConfirm: "¿Sacar a {name} del juego?", removed: "Te sacaron del juego.",
+    full: "Esta sala está llena (12 jugadores).", hostBack: "Reconectando con el anfitrión…",
+    newPlayer: "Entraste a mitad de ronda: jugarás en la siguiente. ¡Disfruta el show!",
+    tvLobby: "Pantalla grande", close: "Cerrar", sound: "Sonido",
+    relayNote: "Cada teléfono necesita internet. Los dibujos y nombres pasan por un servidor público gratuito.",
+    nameTaken: "Escribe un nombre", hostFallback: "Probando otro servidor…",
+    customCat: "Propias", resumeOld: "La sala {code} ya terminó.",
+  },
+};
+let LANG = (navigator.language || "en").toLowerCase().startsWith("es") ? "es" : "en";
+function t(k, v) {
+  let s = (T[LANG] && T[LANG][k]) ?? T.en[k] ?? k;
+  if (v && typeof s === "string") s = s.replace(/\{(\w+)\}/g, (_, n) => v[n] ?? "");
+  return s;
+}
+
+// ---------------------------------------------------------------------
+//  Word packs: [english, spanish]
+// ---------------------------------------------------------------------
+const CATS = [
+  { id: "animals", e: "🐾", en: "Animals", es: "Animales", w: [
+    ["dog","perro"],["cat","gato"],["elephant","elefante"],["giraffe","jirafa"],["penguin","pingüino"],["shark","tiburón"],
+    ["octopus","pulpo"],["snake","serpiente"],["owl","búho"],["monkey","mono"],["lion","león"],["rabbit","conejo"],
+    ["turtle","tortuga"],["frog","rana"],["bee","abeja"],["spider","araña"],["horse","caballo"],["cow","vaca"],
+    ["pig","cerdo"],["chicken","gallina"],["duck","pato"],["dolphin","delfín"],["whale","ballena"],["butterfly","mariposa"],
+    ["snail","caracol"],["crab","cangrejo"],["bat","murciélago"],["kangaroo","canguro"],["zebra","cebra"],["camel","camello"]]},
+  { id: "food", e: "🍕", en: "Food", es: "Comida", w: [
+    ["pizza","pizza"],["hamburger","hamburguesa"],["taco","taco"],["ice cream","helado"],["banana","plátano"],["apple","manzana"],
+    ["watermelon","sandía"],["spaghetti","espaguetis"],["popcorn","palomitas"],["hot dog","perro caliente"],["sushi","sushi"],
+    ["birthday cake","pastel de cumpleaños"],["egg","huevo"],["cheese","queso"],["bread","pan"],["carrot","zanahoria"],
+    ["corn","maíz"],["cookie","galleta"],["donut","dona"],["pineapple","piña"],["strawberry","fresa"],["grapes","uvas"],
+    ["french fries","papas fritas"],["sandwich","sándwich"],["soup","sopa"],["chocolate","chocolate"],["coffee","café"],
+    ["pancakes","panqueques"],["avocado","aguacate"],["chili pepper","chile"]]},
+  { id: "home", e: "🏠", en: "Around the house", es: "En la casa", w: [
+    ["bed","cama"],["toilet","inodoro"],["bathtub","bañera"],["sofa","sofá"],["television","televisión"],["refrigerator","refrigerador"],
+    ["lamp","lámpara"],["clock","reloj"],["door","puerta"],["window","ventana"],["stairs","escaleras"],["mirror","espejo"],
+    ["umbrella","paraguas"],["toothbrush","cepillo de dientes"],["washing machine","lavadora"],["oven","horno"],["chair","silla"],
+    ["key","llave"],["candle","vela"],["pillow","almohada"],["broom","escoba"],["trash can","bote de basura"],["plant","planta"],
+    ["phone","teléfono"],["computer","computadora"]]},
+  { id: "places", e: "🗺️", en: "Places", es: "Lugares", w: [
+    ["beach","playa"],["school","escuela"],["hospital","hospital"],["airport","aeropuerto"],["zoo","zoológico"],["farm","granja"],
+    ["castle","castillo"],["jungle","selva"],["desert","desierto"],["volcano","volcán"],["library","biblioteca"],
+    ["supermarket","supermercado"],["restaurant","restaurante"],["park","parque"],["campsite","campamento"],["outer space","espacio"],
+    ["circus","circo"],["swimming pool","piscina"],["movie theater","cine"],["church","iglesia"],["island","isla"],
+    ["mountain","montaña"],["city","ciudad"],["gym","gimnasio"],["museum","museo"]]},
+  { id: "jobs", e: "👩‍🚒", en: "Jobs", es: "Profesiones", w: [
+    ["doctor","médico"],["firefighter","bombero"],["police officer","policía"],["chef","chef"],["teacher","maestro"],
+    ["astronaut","astronauta"],["pilot","piloto"],["farmer","granjero"],["dentist","dentista"],["pirate","pirata"],
+    ["clown","payaso"],["painter","pintor"],["musician","músico"],["mechanic","mecánico"],["builder","albañil"],
+    ["scientist","científico"],["nurse","enfermero"],["mail carrier","cartero"],["magician","mago"],["lifeguard","salvavidas"],
+    ["hairdresser","peluquero"],["photographer","fotógrafo"],["soccer player","futbolista"],["waiter","mesero"],["baker","panadero"]]},
+  { id: "sports", e: "⚽", en: "Sports & hobbies", es: "Deportes y pasatiempos", w: [
+    ["soccer","fútbol"],["basketball","baloncesto"],["baseball","béisbol"],["tennis","tenis"],["swimming","natación"],
+    ["skiing","esquí"],["surfing","surf"],["bowling","boliche"],["golf","golf"],["boxing","boxeo"],["cycling","ciclismo"],
+    ["skateboarding","patineta"],["fishing","pesca"],["dancing","baile"],["karate","karate"],["chess","ajedrez"],
+    ["video games","videojuegos"],["painting","pintura"],["gardening","jardinería"],["cooking","cocinar"],["reading","lectura"],
+    ["guitar","guitarra"],["piano","piano"],["yoga","yoga"],["volleyball","voleibol"]]},
+  { id: "nature", e: "🌈", en: "Nature & weather", es: "Naturaleza y clima", w: [
+    ["sun","sol"],["moon","luna"],["rain","lluvia"],["snow","nieve"],["rainbow","arcoíris"],["tornado","tornado"],
+    ["lightning","rayo"],["cloud","nube"],["tree","árbol"],["flower","flor"],["cactus","cactus"],["mushroom","hongo"],
+    ["river","río"],["waterfall","cascada"],["ocean","océano"],["star","estrella"],["fire","fuego"],["leaf","hoja"],
+    ["wind","viento"],["earthquake","terremoto"],["snowman","muñeco de nieve"],["cave","cueva"],["sunset","atardecer"],
+    ["iceberg","iceberg"],["palm tree","palmera"]]},
+  { id: "transport", e: "🚀", en: "Things that move", es: "Transportes", w: [
+    ["car","carro"],["bus","autobús"],["train","tren"],["airplane","avión"],["helicopter","helicóptero"],["bicycle","bicicleta"],
+    ["motorcycle","motocicleta"],["boat","barco"],["submarine","submarino"],["rocket","cohete"],["tractor","tractor"],
+    ["ambulance","ambulancia"],["fire truck","camión de bomberos"],["taxi","taxi"],["hot air balloon","globo aerostático"],
+    ["scooter","patinete"],["sailboat","velero"],["police car","patrulla"],["school bus","autobús escolar"],["limousine","limusina"],
+    ["canoe","canoa"],["cable car","teleférico"],["truck","camión"],["spaceship","nave espacial"],["roller coaster","montaña rusa"]]},
+  { id: "clothes", e: "👕", en: "Clothes & stuff", es: "Ropa y accesorios", w: [
+    ["hat","sombrero"],["shoes","zapatos"],["socks","calcetines"],["glasses","lentes"],["sunglasses","lentes de sol"],
+    ["t-shirt","camiseta"],["dress","vestido"],["pants","pantalones"],["jacket","chaqueta"],["scarf","bufanda"],["gloves","guantes"],
+    ["boots","botas"],["tie","corbata"],["crown","corona"],["backpack","mochila"],["wristwatch","reloj de pulsera"],["ring","anillo"],
+    ["necklace","collar"],["pajamas","pijama"],["swimsuit","traje de baño"],["raincoat","impermeable"],["belt","cinturón"],
+    ["cap","gorra"],["mask","máscara"],["costume","disfraz"]]},
+  { id: "spooky", e: "👻", en: "Spooky & fantasy", es: "Terror y fantasía", w: [
+    ["ghost","fantasma"],["vampire","vampiro"],["witch","bruja"],["zombie","zombi"],["mummy","momia"],["skeleton","esqueleto"],
+    ["pumpkin","calabaza"],["dragon","dragón"],["unicorn","unicornio"],["mermaid","sirena"],["robot","robot"],["alien","extraterrestre"],
+    ["wizard","hechicero"],["monster","monstruo"],["werewolf","hombre lobo"],["superhero","superhéroe"],["fairy","hada"],
+    ["giant","gigante"],["treasure","tesoro"],["spider web","telaraña"],["cauldron","caldero"],["haunted house","casa embrujada"],
+    ["tombstone","lápida"],["black cat","gato negro"],["candy","dulces"],["crystal ball","bola de cristal"],["knight","caballero"],
+    ["princess","princesa"],["ninja","ninja"]]},
+];
+const catName = (id, lang = LANG) => id === "custom" ? T[lang].customCat : (CATS.find((c) => c.id === id)?.[lang] || id);
+const cap = (s) => s ? s.charAt(0).toLocaleUpperCase() + s.slice(1) : s;
+
+// ---------------------------------------------------------------------
+//  Small helpers
+// ---------------------------------------------------------------------
+const $ = (s, r = document) => r.querySelector(s);
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === "class") e.className = v;
+    else if (k === "style") e.style.cssText = v;
+    else if (k === "html") e.innerHTML = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat(Infinity)) {
+    if (c == null || c === false) continue;
+    e.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  }
+  return e;
+}
+const rid = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => b.toString(16).padStart(2, "0")).join("");
+const rnd = (n) => Math.floor(Math.random() * n);
+const pick = (a) => a[rnd(a.length)];
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const now = () => Date.now();
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch { return null; } },
+  set(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+function toast(msg) {
+  document.querySelector(".toast")?.remove();
+  const e = el("div", { class: "toast" }, msg);
+  document.body.append(e);
+  setTimeout(() => e.remove(), 2400);
+}
+const COLORS = ["#ff5a3c","#14a68c","#7b4dff","#f29d00","#2f7de0","#e0458c","#4f9d2d","#8a5a2b","#00a3c4","#c0392b","#6c5ce7","#d35400"];
+const avatar = (p, extra = "") => el("span", { class: "av " + extra, style: `background:${p ? COLORS[p.col % COLORS.length] : "#999"}` }, p ? (p.name || "?").trim().charAt(0).toUpperCase() : "?");
+
+// ---------------------------------------------------------------------
+//  Sound + vibration + keep screen awake
+// ---------------------------------------------------------------------
+let audioCtx = null, muted = !!store.get("di_mute");
+function beep(freq = 660, dur = 0.12, vol = 0.15) {
+  if (muted) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.frequency.value = freq; o.type = "triangle";
+    g.gain.setValueAtTime(vol, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+    o.connect(g).connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + dur);
+  } catch {}
+}
+const buzz = (ms) => { try { navigator.vibrate?.(ms); } catch {} };
+document.addEventListener("pointerdown", () => { try { audioCtx?.state === "suspended" && audioCtx.resume(); } catch {} }, { passive: true });
+let wakeLock = null;
+async function keepAwake() {
+  try { if (!wakeLock && navigator.wakeLock) { wakeLock = await navigator.wakeLock.request("screen"); wakeLock.addEventListener("release", () => (wakeLock = null)); } } catch {}
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && C.code) keepAwake(); });
+
+// ---------------------------------------------------------------------
+//  QR code (byte mode, error correction M, versions 1–10)
+// ---------------------------------------------------------------------
+const QR = (() => {
+  const EXP = new Uint8Array(512), LOG = new Uint8Array(256);
+  for (let i = 0, x = 1; i < 255; i++) { EXP[i] = x; LOG[x] = i; x <<= 1; if (x & 256) x ^= 0x11d; }
+  for (let i = 255; i < 512; i++) EXP[i] = EXP[i - 255];
+  const mul = (a, b) => (a && b ? EXP[LOG[a] + LOG[b]] : 0);
+  function gen(n) {
+    let g = [1];
+    for (let i = 0; i < n; i++) {
+      const ng = new Array(g.length + 1).fill(0);
+      for (let j = 0; j < g.length; j++) { ng[j] ^= g[j]; ng[j + 1] ^= mul(g[j], EXP[i]); }
+      g = ng;
+    }
+    return g;
+  }
+  function ecc(data, n) {
+    const g = gen(n), r = new Array(n).fill(0);
+    for (const d of data) {
+      const f = d ^ r.shift(); r.push(0);
+      for (let j = 0; j < n; j++) r[j] ^= mul(g[j + 1], f);
+    }
+    return r;
+  }
+  const EC = [null, [10, [[1, 16]]], [16, [[1, 28]]], [26, [[1, 44]]], [18, [[2, 32]]], [24, [[2, 43]]], [16, [[4, 27]]],
+    [18, [[4, 31]]], [22, [[2, 38], [2, 39]]], [22, [[3, 36], [2, 37]]], [26, [[4, 43], [1, 44]]]];
+  const ALIGN = [null, [], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34], [6, 22, 38], [6, 24, 42], [6, 26, 46], [6, 28, 50]];
+  const MASK = [(r, c) => (r + c) % 2 === 0, (r) => r % 2 === 0, (r, c) => c % 3 === 0, (r, c) => (r + c) % 3 === 0,
+    (r, c) => (Math.floor(r / 2) + Math.floor(c / 3)) % 2 === 0, (r, c) => ((r * c) % 2) + ((r * c) % 3) === 0,
+    (r, c) => (((r * c) % 2) + ((r * c) % 3)) % 2 === 0, (r, c) => (((r + c) % 2) + ((r * c) % 3)) % 2 === 0];
+
+  function penalty(G) {
+    const N = G.length; let p = 0;
+    const at = (a, b, tr) => (tr ? G[b][a] : G[a][b]);
+    for (let tr = 0; tr < 2; tr++) for (let a = 0; a < N; a++) {
+      let run = 1;
+      for (let b = 1; b <= N; b++) {
+        if (b < N && at(a, b, tr) === at(a, b - 1, tr)) run++;
+        else { if (run >= 5) p += run - 2; run = 1; }
+      }
+      for (let b = 0; b + 11 <= N; b++) {
+        let m1 = true, m2 = true;
+        const P1 = [1,0,1,1,1,0,1,0,0,0,0], P2 = [0,0,0,0,1,0,1,1,1,0,1];
+        for (let k = 0; k < 11; k++) { const v = at(a, b + k, tr) ? 1 : 0; if (v !== P1[k]) m1 = false; if (v !== P2[k]) m2 = false; }
+        if (m1) p += 40; if (m2) p += 40;
+      }
+    }
+    for (let r = 0; r < N - 1; r++) for (let c = 0; c < N - 1; c++) {
+      const v = G[r][c]; if (v === G[r + 1][c] && v === G[r][c + 1] && v === G[r + 1][c + 1]) p += 3;
+    }
+    let dark = 0; for (const row of G) for (const v of row) if (v) dark++;
+    p += Math.floor(Math.abs((dark * 20) / (N * N) - 10)) * 10;
+    return p;
+  }
+
+  function make(text) {
+    const bytes = [...new TextEncoder().encode(text)];
+    let ver = 1, dataCw = 0;
+    for (; ver <= 10; ver++) {
+      dataCw = EC[ver][1].reduce((s, [c, n]) => s + c * n, 0);
+      if (4 + (ver < 10 ? 8 : 16) + bytes.length * 8 <= dataCw * 8) break;
+    }
+    if (ver > 10) throw new Error("QR text too long");
+    const cb = ver < 10 ? 8 : 16, bits = [];
+    const put = (v, n) => { for (let i = n - 1; i >= 0; i--) bits.push((v >> i) & 1); };
+    put(4, 4); put(bytes.length, cb); for (const b of bytes) put(b, 8);
+    put(0, Math.min(4, dataCw * 8 - bits.length));
+    while (bits.length % 8) bits.push(0);
+    const data = [];
+    for (let i = 0; i < bits.length; i += 8) { let v = 0; for (let j = 0; j < 8; j++) v = (v << 1) | bits[i + j]; data.push(v); }
+    for (let pad = 0; data.length < dataCw; pad ^= 1) data.push(pad ? 0x11 : 0xec);
+    const [ecn, groups] = EC[ver], blocks = [];
+    let off = 0;
+    for (const [cnt, n] of groups) for (let i = 0; i < cnt; i++) { const d = data.slice(off, off + n); off += n; blocks.push({ d, e: ecc(d, ecn) }); }
+    const out = [], maxD = Math.max(...blocks.map((b) => b.d.length));
+    for (let i = 0; i < maxD; i++) for (const b of blocks) if (i < b.d.length) out.push(b.d[i]);
+    for (let i = 0; i < ecn; i++) for (const b of blocks) out.push(b.e[i]);
+
+    const N = 17 + 4 * ver;
+    const M = [...Array(N)].map(() => new Array(N).fill(false));
+    const F = [...Array(N)].map(() => new Array(N).fill(false));
+    const set = (r, c, v) => { M[r][c] = !!v; F[r][c] = true; };
+    const finder = (r0, c0) => {
+      for (let i = -1; i <= 7; i++) for (let j = -1; j <= 7; j++) {
+        const r = r0 + i, c = c0 + j;
+        if (r < 0 || c < 0 || r >= N || c >= N) continue;
+        const inside = i >= 0 && i <= 6 && j >= 0 && j <= 6;
+        set(r, c, inside && (i === 0 || i === 6 || j === 0 || j === 6 || (i >= 2 && i <= 4 && j >= 2 && j <= 4)));
+      }
+    };
+    finder(0, 0); finder(0, N - 7); finder(N - 7, 0);
+    for (let i = 0; i < N; i++) { if (!F[6][i]) set(6, i, i % 2 === 0); if (!F[i][6]) set(i, 6, i % 2 === 0); }
+    const al = ALIGN[ver];
+    for (const r of al) for (const c of al) {
+      if ((r < 9 && c < 9) || (r < 9 && c > N - 10) || (r > N - 10 && c < 9)) continue;
+      for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) set(r + i, c + j, Math.max(Math.abs(i), Math.abs(j)) !== 1);
+    }
+    // reserve format + version areas
+    for (let i = 0; i < 9; i++) { F[8][i] = F[i][8] = true; }
+    for (let i = 0; i < 8; i++) { F[8][N - 1 - i] = true; F[N - 1 - i][8] = true; }
+    if (ver >= 7) for (let i = 0; i < 6; i++) for (let j = 0; j < 3; j++) { F[i][N - 11 + j] = true; F[N - 11 + j][i] = true; }
+    // data
+    let bi = 0; const total = out.length * 8;
+    for (let right = N - 1; right >= 1; right -= 2) {
+      if (right === 6) right = 5;
+      for (let vert = 0; vert < N; vert++) for (let j = 0; j < 2; j++) {
+        const c = right - j, up = ((right + 1) & 2) === 0, r = up ? N - 1 - vert : vert;
+        if (F[r][c]) continue;
+        let v = false;
+        if (bi < total) { v = ((out[bi >> 3] >> (7 - (bi & 7))) & 1) === 1; bi++; }
+        M[r][c] = v;
+      }
+    }
+    const drawFormat = (G, mask) => {
+      const data5 = (0 << 3) | mask; // EC level M = 00
+      let rem = data5;
+      for (let i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >> 9) * 0x537);
+      const b = ((data5 << 10) | rem) ^ 0x5412, bit = (i) => ((b >> i) & 1) === 1;
+      for (let i = 0; i <= 5; i++) G[i][8] = bit(i);
+      G[7][8] = bit(6); G[8][8] = bit(7); G[8][7] = bit(8);
+      for (let i = 9; i < 15; i++) G[8][14 - i] = bit(i);
+      for (let i = 0; i < 8; i++) G[8][N - 1 - i] = bit(i);
+      for (let i = 8; i < 15; i++) G[N - 15 + i][8] = bit(i);
+      G[N - 8][8] = true;
+      if (ver >= 7) {
+        let r2 = ver;
+        for (let i = 0; i < 12; i++) r2 = (r2 << 1) ^ ((r2 >> 11) * 0x1f25);
+        const vb = (ver << 12) | r2;
+        for (let i = 0; i < 18; i++) {
+          const v = ((vb >> i) & 1) === 1, a = N - 11 + (i % 3), bb = Math.floor(i / 3);
+          G[bb][a] = v; G[a][bb] = v;
+        }
+      }
+    };
+    let best = null, bestP = Infinity;
+    for (let m = 0; m < 8; m++) {
+      const G = M.map((row, r) => row.map((v, c) => (F[r][c] ? v : v !== MASK[m](r, c))));
+      drawFormat(G, m);
+      const p = penalty(G);
+      if (p < bestP) { bestP = p; best = G; }
+    }
+    return best;
+  }
+  function svg(text) {
+    const G = make(text), N = G.length, q = 4, S = N + q * 2;
+    let d = "";
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (G[r][c]) d += `M${c + q} ${r + q}h1v1h-1z`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${S} ${S}" shape-rendering="crispEdges"><rect width="${S}" height="${S}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+  }
+  return { make, svg };
+})();
+
+// ---------------------------------------------------------------------
+//  Minimal MQTT 3.1.1 client over WebSocket (QoS 0 publish/subscribe)
+// ---------------------------------------------------------------------
+function relay(url, { onMessage, onStatus }) {
+  const enc = new TextEncoder(), dec = new TextDecoder();
+  const subs = new Set();
+  let ws = null, buf = new Uint8Array(0), up = false, closed = false, tries = 0, pingT = 0, connT = 0, pid = 1;
+  const cat = (...parts) => { const n = parts.reduce((s, p) => s + p.length, 0), o = new Uint8Array(n); let i = 0; for (const p of parts) { o.set(p, i); i += p.length; } return o; };
+  const str = (s) => { const b = enc.encode(s); return cat([b.length >> 8, b.length & 255], b); };
+  const varlen = (n) => { const o = []; do { let d = n % 128; n = Math.floor(n / 128); if (n > 0) d |= 128; o.push(d); } while (n > 0); return o; };
+  const packet = (h, body) => cat([h, ...varlen(body.length)], body);
+  const send = (p) => { try { if (ws && ws.readyState === 1) ws.send(p); } catch {} };
+  const sendSub = (topic) => { pid = (pid % 65000) + 1; send(packet(0x82, cat([pid >> 8, pid & 255], str(topic), [0]))); };
+  const setUp = (v) => { if (up === v) return; up = v; onStatus?.(v); };
+
+  function connect() {
+    if (closed) return;
+    clearTimeout(connT);
+    try { ws = new WebSocket(url, ["mqtt"]); } catch { return retry(); }
+    ws.binaryType = "arraybuffer";
+    const me = ws;
+    connT = setTimeout(() => { if (ws === me && !up) { try { me.close(); } catch {} } }, 8000);
+    ws.onopen = () => {
+      const cid = "di" + rid(8);
+      send(packet(0x10, cat(str("MQTT"), [4, 0x02, 0, 30], str(cid))));
+    };
+    ws.onmessage = (ev) => { buf = cat(buf, new Uint8Array(ev.data)); parse(); };
+    ws.onclose = ws.onerror = () => {
+      if (ws !== me) return;
+      ws = null; clearInterval(pingT); clearTimeout(connT); setUp(false); retry();
+    };
+  }
+  function retry() {
+    if (closed) return;
+    const wait = Math.min(1000 * 2 ** tries, 8000) + rnd(400);
+    tries++;
+    setTimeout(connect, wait);
+  }
+  function parse() {
+    while (buf.length >= 2) {
+      let mult = 1, len = 0, i = 1, b;
+      do { if (i >= buf.length) return; b = buf[i++]; len += (b & 127) * mult; mult *= 128; } while (b & 128);
+      if (buf.length < i + len) return;
+      const h = buf[0], body = buf.subarray(i, i + len);
+      buf = buf.slice(i + len);
+      const type = h >> 4;
+      if (type === 2) {
+        if (body[1] === 0) {
+          tries = 0; clearTimeout(connT); setUp(true);
+          for (const s of subs) sendSub(s);
+          clearInterval(pingT); pingT = setInterval(() => send(new Uint8Array([0xc0, 0])), 20000);
+        } else { try { ws.close(); } catch {} }
+      } else if (type === 3) {
+        const qos = (h >> 1) & 3, tl = (body[0] << 8) | body[1];
+        const topic = dec.decode(body.subarray(2, 2 + tl));
+        let o = 2 + tl;
+        if (qos > 0) { const a = body[o], bb = body[o + 1]; o += 2; if (qos === 1) send(new Uint8Array([0x40, 2, a, bb])); }
+        let msg = null;
+        try { msg = JSON.parse(dec.decode(body.subarray(o))); } catch {}
+        if (msg) try { onMessage(topic, msg); } catch (e) { console.error(e); }
+      }
+    }
+  }
+  connect();
+  return {
+    sub(topic) { subs.add(topic); if (up) sendSub(topic); },
+    pub(topic, obj) { if (up) send(packet(0x30, cat(str(topic), enc.encode(JSON.stringify(obj))))); return up; },
+    get up() { return up; },
+    close() { closed = true; clearInterval(pingT); clearTimeout(connT); setUp(false); try { ws?.close(); } catch {} },
+  };
+}
+
+const params = new URLSearchParams(location.search);
+const OVERRIDE = params.get("broker");
+const BROKERS = OVERRIDE ? [OVERRIDE] : ["wss://broker.hivemq.com:8884/mqtt", "wss://broker.emqx.io:8084/mqtt", "wss://test.mosquitto.org:8081/mqtt"];
+const ALPH = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const brokerFor = (code) => BROKERS[ALPH.indexOf(code[0]) % BROKERS.length];
+const TOP = (code) => `doodleimp/v1/${code}`;
+function makeCode(brokerIdx) {
+  let s = "";
+  do { s = ""; for (let i = 0; i < 5; i++) s += ALPH[rnd(ALPH.length)]; } while (ALPH.indexOf(s[0]) % BROKERS.length !== brokerIdx);
+  return s;
+}
+const joinUrl = (code) => {
+  const u = new URL(location.href); u.search = ""; u.hash = "";
+  u.searchParams.set("room", code);
+  if (OVERRIDE) u.searchParams.set("broker", OVERRIDE);
+  return u.toString();
+};
+
+// ---------------------------------------------------------------------
+//  Drawing board. Every drawing is a flat list of numbers so it can be
+//  streamed live and replayed exactly the same on every phone.
+//    0–999          x,y point pairs (800×800 canvas)
+//    1000+c*8+s     start a stroke (color c, size s), then points
+//    2000+c, x, y   bucket fill      3000 undo   3001 clear   3002 end stroke
+// ---------------------------------------------------------------------
+const PAL = ["#1d1a24","#ffffff","#9a96a3","#e8322c","#ff8a1f","#ffd21f","#43c43c","#11804a",
+             "#46c8f5","#2f5fe0","#8a3fd6","#ff70b8","#8a5a2b","#f7caa0","#c9874f","#ffe9b0"];
+const SIZES = [5, 12, 26, 52];
+const W = 800, OP_B = 1000, OP_F = 2000, OP_U = 3000, OP_K = 3001, OP_E = 3002;
+const RGB = PAL.map((h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)));
+
+class Board {
+  constructor(canvas) {
+    this.cv = canvas || document.createElement("canvas");
+    this.cv.width = this.cv.height = W;
+    this.g = this.cv.getContext("2d", { willReadFrequently: true });
+    this.reset();
+  }
+  reset() { this.tok = []; this.i = 0; this.ops = []; this.cur = null; this.white(); }
+  white() { this.g.fillStyle = "#fff"; this.g.fillRect(0, 0, W, W); }
+  load(tok) { this.reset(); this.push(tok || []); }
+  push(tok) { for (const v of tok) this.tok.push(v); this.run(); }
+  run() {
+    const T2 = this.tok;
+    while (this.i < T2.length) {
+      const v = T2[this.i];
+      if (v >= 1000) {
+        if (v === OP_U) { this.i++; this.endStroke(); this.ops.pop(); this.redraw(); continue; }
+        if (v === OP_K) { this.i++; this.endStroke(); this.ops.push({ k: 1 }); this.white(); continue; }
+        if (v === OP_E) { this.i++; this.endStroke(); continue; }
+        if (v >= OP_F) {
+          if (this.i + 2 >= T2.length) return;
+          this.endStroke();
+          const op = { f: 1, c: (v - OP_F) & 15, x: T2[this.i + 1], y: T2[this.i + 2] };
+          this.i += 3; this.ops.push(op); this.fill(op); continue;
+        }
+        this.endStroke();
+        const code = v - OP_B, op = { c: (code >> 3) & 15, s: Math.min(3, code & 7), p: [] };
+        this.i++; this.cur = op; this.ops.push(op); continue;
+      }
+      if (this.i + 1 >= T2.length) return;
+      const x = v, y = T2[this.i + 1]; this.i += 2;
+      if (this.cur) { this.cur.p.push(x, y); this.seg(this.cur, this.cur.p.length / 2 - 1); }
+    }
+  }
+  endStroke() { if (this.cur) { this.tail(this.cur); this.cur = null; } }
+  style(op) { const g = this.g, col = PAL[op.c]; g.strokeStyle = col; g.fillStyle = col; g.lineWidth = SIZES[op.s]; g.lineCap = "round"; g.lineJoin = "round"; }
+  seg(op, n) {
+    const g = this.g, p = op.p; this.style(op);
+    const x = p[2 * n], y = p[2 * n + 1];
+    if (n === 0) { g.beginPath(); g.arc(x, y, SIZES[op.s] / 2, 0, Math.PI * 2); g.fill(); return; }
+    const px = p[2 * n - 2], py = p[2 * n - 1], mx = (px + x) / 2, my = (py + y) / 2;
+    g.beginPath();
+    if (n === 1) { g.moveTo(px, py); g.lineTo(mx, my); }
+    else { g.moveTo((p[2 * n - 4] + px) / 2, (p[2 * n - 3] + py) / 2); g.quadraticCurveTo(px, py, mx, my); }
+    g.stroke();
+  }
+  tail(op) {
+    const p = op.p, n = p.length / 2; if (n < 2) return;
+    const g = this.g; this.style(op);
+    const x = p[2 * n - 2], y = p[2 * n - 1];
+    g.beginPath(); g.moveTo((p[2 * n - 4] + x) / 2, (p[2 * n - 3] + y) / 2); g.lineTo(x, y); g.stroke();
+  }
+  redraw() {
+    let start = 0;
+    for (let i = this.ops.length - 1; i >= 0; i--) if (this.ops[i].k) { start = i; break; }
+    this.white();
+    for (let i = start; i < this.ops.length; i++) {
+      const op = this.ops[i];
+      if (op.k) continue;
+      if (op.f) this.fill(op);
+      else { for (let k = 0; k < op.p.length / 2; k++) this.seg(op, k); if (op !== this.cur) this.tail(op); }
+    }
+  }
+  fill(op) {
+    const g = this.g, img = g.getImageData(0, 0, W, W), d = img.data;
+    const x = Math.max(0, Math.min(W - 1, op.x | 0)), y = Math.max(0, Math.min(W - 1, op.y | 0));
+    const s = (y * W + x) * 4, tr = d[s], tg = d[s + 1], tb = d[s + 2];
+    const [fr, fg, fb] = RGB[op.c];
+    if (Math.abs(tr - fr) + Math.abs(tg - fg) + Math.abs(tb - fb) < 12) return;
+    const TOL = 120, mask = new Uint8Array(W * W);
+    const ok = (q) => { const o = q * 4; return Math.abs(d[o] - tr) + Math.abs(d[o + 1] - tg) + Math.abs(d[o + 2] - tb) <= TOL; };
+    const stack = [y * W + x]; mask[y * W + x] = 1;
+    while (stack.length) {
+      const q = stack.pop(), qx = q % W;
+      if (qx > 0 && !mask[q - 1] && ok(q - 1)) { mask[q - 1] = 1; stack.push(q - 1); }
+      if (qx < W - 1 && !mask[q + 1] && ok(q + 1)) { mask[q + 1] = 1; stack.push(q + 1); }
+      if (q >= W && !mask[q - W] && ok(q - W)) { mask[q - W] = 1; stack.push(q - W); }
+      if (q < W * (W - 1) && !mask[q + W] && ok(q + W)) { mask[q + W] = 1; stack.push(q + W); }
+    }
+    for (let q = 0; q < W * W; q++) {
+      const qx = q % W;
+      if (mask[q] || (qx > 0 && mask[q - 1]) || (qx < W - 1 && mask[q + 1]) || (q >= W && mask[q - W]) || (q < W * (W - 1) && mask[q + W])) {
+        const o = q * 4; d[o] = fr; d[o + 1] = fg; d[o + 2] = fb; d[o + 3] = 255;
+      }
+    }
+    g.putImageData(img, 0, 0);
+  }
+  // ---- input (only on the drawer's phone) ----
+  enableInput(onTok) {
+    this.tool = "pen"; this.color = 0; this.size = 1; this.enabled = true; this.onTok = onTok;
+    let active = null, lx = 0, ly = 0;
+    const pos = (e) => {
+      const r = this.cv.getBoundingClientRect();
+      return [Math.max(0, Math.min(W - 1, Math.round(((e.clientX - r.left) / r.width) * W))),
+              Math.max(0, Math.min(W - 1, Math.round(((e.clientY - r.top) / r.height) * W)))];
+    };
+    const emit = (arr) => { this.push(arr); this.onTok(arr); };
+    this.cv.addEventListener("pointerdown", (e) => {
+      if (!this.enabled || active !== null) return;
+      e.preventDefault();
+      const [x, y] = pos(e);
+      if (this.tool === "fill") { emit([OP_F + this.color, x, y]); return; }
+      active = e.pointerId; try { this.cv.setPointerCapture(e.pointerId); } catch {}
+      const c = this.tool === "eraser" ? 1 : this.color;
+      emit([OP_B + c * 8 + this.size, x, y]); lx = x; ly = y;
+    });
+    this.cv.addEventListener("pointermove", (e) => {
+      if (e.pointerId !== active || !this.enabled) return;
+      e.preventDefault();
+      const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+      const add = [];
+      for (const ce of evs.length ? evs : [e]) {
+        const [x, y] = pos(ce);
+        if (Math.hypot(x - lx, y - ly) >= 2.5) { add.push(x, y); lx = x; ly = y; }
+      }
+      if (add.length) emit(add);
+    });
+    const up = (e) => { if (e.pointerId !== active) return; active = null; if (this.enabled) emit([OP_E]); };
+    this.cv.addEventListener("pointerup", up);
+    this.cv.addEventListener("pointercancel", up);
+    this.cv.addEventListener("contextmenu", (e) => e.preventDefault());
+    this.stop = () => { if (active !== null) { active = null; emit([OP_E]); } this.enabled = false; };
+  }
+  act(kind) { if (!this.enabled) return; const a = kind === "undo" ? [OP_U] : [OP_K]; this.push(a); this.onTok(a); }
+}
+// thumbnails (cached)
+const thumbCache = new Map();
+function drawingImg(tok, key) {
+  if (key && thumbCache.has(key)) return thumbCache.get(key);
+  const b = new Board(); b.load(tok);
+  const c = document.createElement("canvas"); c.width = c.height = 400;
+  c.getContext("2d").drawImage(b.cv, 0, 0, 400, 400);
+  const url = c.toDataURL("image/png");
+  if (key) thumbCache.set(key, url);
+  return url;
+}
+
+// =====================================================================
+//  HOST ENGINE — runs only on the host's phone. It owns the game state.
+// =====================================================================
+let H = null;
+function hostCreate(name) {
+  const meId = rid(8);
+  H = {
+    code: makeCode(0), brokerIdx: 0, hid: rid(6), me: { id: meId, name },
+    st: {
+      hid: "", v: 0, phase: "lobby", lang: LANG, hostId: meId,
+      set: { cat: "mix", time: 30, laps: 0, rounds: 5, hint: true },
+      players: [{ id: meId, name, score: 0, col: 0, on: true, ready: false, wait: false }],
+      round: 0, rid: "", parts: [], order: [], k: 0, left: 0, total: 0, done: 0,
+      cands: [], voted: [], vr: 1, guess: null, res: null, customN: 0,
+    },
+    sec: null, draw: {}, live: null, seen: {}, impCount: {}, used: {}, custom: [], deadline: 0, lastImp: "",
+  };
+  H.st.hid = H.hid;
+  return H;
+}
+const hP = (id) => H.st.players.find((p) => p.id === id);
+const hOnline = (id) => id === H.me.id || now() - (H.seen[id] || 0) < 15000;
+function hSave() {
+  clearTimeout(hSave.t);
+  hSave.t = setTimeout(() => store.set("di_host", { ts: now(), H }), 300);
+}
+function hPublish() {
+  const st = H.st; st.v++;
+  st.left = H.deadline ? Math.max(0, H.deadline - now()) : 0;
+  H.lastPub = now();
+  C.conn?.pub(TOP(H.code) + "/s", st);
+  onState(JSON.parse(JSON.stringify(st)));
+  hSave();
+}
+function hPriv(id, msg) {
+  if (id === H.me.id) onPriv(msg);
+  else C.conn?.pub(TOP(H.code) + "/p/" + id, msg);
+}
+const inRound = () => ["reveal", "draw", "vote", "guess"].includes(H.st.phase);
+function hSendRole(id) {
+  if (!H.sec || !inRound() || !H.st.parts.includes(id)) return;
+  const imp = id === H.sec.imp;
+  hPriv(id, { t: "role", rid: H.st.rid, role: imp ? "imp" : "crew",
+    word: imp ? null : H.sec.word, cat: H.sec.w.c === "custom" || (imp && !H.st.set.hint) ? null : H.sec.catName });
+}
+function hSendDrawing(k, to) {
+  const d = H.draw[k];
+  if (!d) return;
+  const m = { rid: H.st.rid, k, pid: d.pid, tok: d.tok, sk: !!d.sk };
+  C.conn?.pub(TOP(H.code) + "/g", m);
+  onGal(m);
+}
+function uniqueName(name, id) {
+  name = (name || "?").trim().slice(0, 16) || "?";
+  let n = name, i = 2;
+  while (H.st.players.some((p) => p.id !== id && p.name.toLowerCase() === n.toLowerCase())) n = name + " " + i++;
+  return n;
+}
+function hMsg(m) {
+  if (!H || !m || !m.id) return;
+  const fresh = !hOnline(m.id);
+  H.seen[m.id] = now();
+  const st = H.st, p = hP(m.id);
+  if (p && fresh && !p.on) { p.on = true; hPublish(); }
+  switch (m.t) {
+    case "hello": {
+      if (m.tv) { if (now() - (H.lastPub || 0) > 300) hPublish(); return; }
+      if (!p) {
+        if (st.players.length >= 12) { hPriv(m.id, { t: "full" }); return; }
+        const used = new Set(st.players.map((x) => x.col));
+        let col = 0; while (used.has(col) && col < 30) col++;
+        st.players.push({ id: m.id, name: uniqueName(m.name, m.id), score: 0, col, on: true, ready: false, wait: st.phase !== "lobby" && st.phase !== "final" });
+      } else if (m.name && m.name.trim() && m.name.trim().slice(0, 16) !== p.name) p.name = uniqueName(m.name, p.id);
+      hSendRole(m.id);
+      hPublish();
+      break;
+    }
+    case "ready":
+      if (p && st.phase === "reveal" && !p.ready) { p.ready = true; hPublish(); hCheckReady(); }
+      break;
+    case "vote": hVote(m.id, m.to); break;
+    case "guess": hGuess(m.id, m.i); break;
+    case "need":
+      for (const k of (m.ks || []).slice(0, 30)) {
+        H.needT = H.needT || {};
+        if (now() - (H.needT[k] || 0) > 2000) { H.needT[k] = now(); hSendDrawing(k); }
+      }
+      break;
+    case "resume":
+      if (st.phase === "draw" && m.rid === st.rid && m.k === st.k && st.order[st.k] === m.id && H.live && H.live.k === st.k)
+        hPriv(m.id, { t: "resume", rid: st.rid, k: st.k, tok: H.live.tok });
+      break;
+    case "leave": hRemove(m.id); break;
+  }
+}
+function hDraw(m) {
+  const st = H.st;
+  if (!m || m.rid !== st.rid || m.by !== st.order[m.k]) return;
+  if (m.k === st.k && st.phase === "draw") {
+    if (!H.live || H.live.k !== m.k) H.live = { k: m.k, tok: [] };
+    const L = H.live.tok;
+    if (m.full || m.fin) { if (m.tok.length >= L.length || m.fin) H.live.tok = m.tok.slice(); }
+    else if (m.from === L.length) for (const v of m.tok) L.push(v);
+    else if (m.from < L.length && m.from + m.tok.length > L.length) for (const v of m.tok.slice(L.length - m.from)) L.push(v);
+    hSave();
+    if (m.fin) hEndTurn();
+  } else if (m.fin && m.k < st.k) {
+    const d = H.draw[m.k];
+    if (d && m.tok.length > d.tok.length) { d.tok = m.tok.slice(); d.sk = false; hSendDrawing(m.k); hSave(); }
+  }
+}
+function pickWord() {
+  const cat = H.st.set.cat;
+  let pool;
+  if (cat === "custom" && H.custom.length) pool = H.custom.map((_, i) => ({ c: "custom", i }));
+  else {
+    const cs = cat === "mix" || cat === "custom" ? CATS : CATS.filter((c) => c.id === cat);
+    pool = cs.flatMap((c) => c.w.map((_, i) => ({ c: c.id, i })));
+  }
+  let avail = pool.filter((x) => !H.used[x.c + ":" + x.i]);
+  if (!avail.length) { for (const x of pool) delete H.used[x.c + ":" + x.i]; avail = pool; }
+  const w = pick(avail); H.used[w.c + ":" + w.i] = 1;
+  return w;
+}
+const wordText = (w) => w.c === "custom" ? H.custom[w.i] : CATS.find((c) => c.id === w.c).w[w.i][H.st.lang === "es" ? 1 : 0];
+function guessChoices(w) {
+  const word = wordText(w);
+  let others = w.c === "custom"
+    ? H.custom.filter((x, i) => i !== w.i)
+    : CATS.find((c) => c.id === w.c).w.filter((_, i) => i !== w.i).map((p) => p[H.st.lang === "es" ? 1 : 0]);
+  others = shuffle([...new Set(others.filter((x) => x.toLowerCase() !== word.toLowerCase()))]).slice(0, 7);
+  if (others.length < 7) {
+    const extra = shuffle(CATS.flatMap((c) => c.w.map((p) => p[H.st.lang === "es" ? 1 : 0])))
+      .filter((x) => x !== word && !others.includes(x));
+    others.push(...extra.slice(0, 7 - others.length));
+  }
+  return shuffle([word, ...others]).map(cap);
+}
+function hNewRound() {
+  const st = H.st;
+  for (const p of st.players) { p.wait = false; p.on = hOnline(p.id); p.ready = false; }
+  const parts = st.players.filter((p) => p.on).map((p) => p.id);
+  if (parts.length < 3) { toast(t("need3")); return; }
+  const w = pickWord();
+  // choose the impostor among the players who have been impostor the fewest times
+  const minC = Math.min(...parts.map((id) => H.impCount[id] || 0));
+  let cand = parts.filter((id) => (H.impCount[id] || 0) === minC);
+  if (cand.length > 1) cand = cand.filter((id) => id !== H.lastImp);
+  const imp = pick(cand);
+  H.impCount[imp] = (H.impCount[imp] || 0) + 1; H.lastImp = imp;
+  const laps = st.set.laps || (parts.length <= 5 ? 2 : 1);
+  const order = [];
+  for (let lap = 0; lap < laps; lap++) {
+    const o = shuffle(parts);
+    if (lap === 0 && o[0] === imp) { const j = 1 + rnd(o.length - 1); [o[0], o[j]] = [o[j], o[0]]; }
+    if (order.length && o[0] === order[order.length - 1]) [o[0], o[1]] = [o[1], o[0]];
+    order.push(...o);
+  }
+  H.sec = { w, word: cap(wordText(w)), catName: w.c === "custom" ? T[st.lang].customCat : catName(w.c, st.lang), imp, votes: {}, choices: null };
+  H.draw = {}; H.live = null; H.deadline = 0;
+  Object.assign(st, { phase: "reveal", round: st.round + 1, rid: rid(4), parts, order, k: 0, done: 0, cands: [], voted: [], vr: 1, guess: null, res: null });
+  for (const id of parts) hSendRole(id);
+  hPublish();
+}
+function hCheckReady() {
+  const st = H.st;
+  if (st.phase !== "reveal") return;
+  const need = st.parts.filter((id) => hOnline(id));
+  if (need.every((id) => hP(id)?.ready)) { clearTimeout(H.readyT); H.readyT = setTimeout(() => H.st.phase === "reveal" && hStartDraw(), 900); }
+}
+function hStartDraw() {
+  const st = H.st;
+  if (st.phase !== "reveal") return;
+  st.phase = "draw"; st.k = -1; st.done = 0;
+  hNextTurn();
+}
+function hNextTurn() {
+  const st = H.st;
+  st.k++;
+  while (st.k < st.order.length && !hOnline(st.order[st.k])) {
+    H.draw[st.k] = { pid: st.order[st.k], tok: [], sk: true };
+    st.done = st.k + 1; hSendDrawing(st.k); st.k++;
+  }
+  if (st.k >= st.order.length) return hStartVote(st.parts.slice());
+  H.live = { k: st.k, tok: [] };
+  H.deadline = now() + st.set.time * 1000; st.total = st.set.time * 1000;
+  hPublish();
+}
+function hEndTurn() {
+  const st = H.st;
+  if (st.phase !== "draw") return;
+  H.draw[st.k] = { pid: st.order[st.k], tok: H.live && H.live.k === st.k ? H.live.tok : [], sk: false };
+  st.done = st.k + 1;
+  hSendDrawing(st.k);
+  hNextTurn();
+}
+function hStartVote(cands) {
+  const st = H.st;
+  st.phase = "vote"; st.cands = cands; st.voted = []; H.sec.votes = {}; H.deadline = 0; st.total = 0;
+  hPublish();
+}
+function hVote(id, to) {
+  const st = H.st;
+  if (st.phase !== "vote" || !st.parts.includes(id) || !st.cands.includes(to) || to === id) return;
+  H.sec.votes[id] = to;
+  st.voted = Object.keys(H.sec.votes);
+  hPublish();
+  hCheckVotes();
+}
+function hCheckVotes() {
+  const st = H.st;
+  if (st.phase !== "vote") return;
+  const allIn = () => { const need = H.st.parts.filter((id) => hOnline(id)); return need.length > 0 && need.every((id) => H.sec.votes[id]); };
+  if (allIn()) {
+    clearTimeout(H.voteT);
+    H.voteT = setTimeout(() => { if (H.st.phase === "vote" && allIn()) hTally(); }, 1200);
+  }
+}
+function hTally() {
+  const st = H.st;
+  if (st.phase !== "vote") return;
+  clearTimeout(H.voteT);
+  const count = {};
+  for (const to of Object.values(H.sec.votes)) count[to] = (count[to] || 0) + 1;
+  const max = Math.max(0, ...Object.values(count));
+  const tops = Object.keys(count).filter((id) => count[id] === max);
+  if (max > 0 && tops.length > 1 && st.vr === 1) { st.vr = 2; H.sec.votes1 = H.sec.votes; return hStartVote(tops); }
+  if (tops.length !== 1) return hResult({ caught: null, tie: true });
+  const caught = tops[0];
+  if (caught === H.sec.imp) return hStartGuess();
+  hResult({ caught });
+}
+function hStartGuess() {
+  const st = H.st;
+  H.sec.choices = guessChoices(H.sec.w);
+  st.phase = "guess";
+  st.guess = { imp: H.sec.imp, choices: H.sec.choices, pick: null };
+  H.deadline = now() + 30000; st.total = 30000;
+  hPublish();
+}
+function hGuess(id, i) {
+  const st = H.st;
+  if (st.phase !== "guess" || id !== H.sec.imp || st.guess.pick != null) return;
+  i = i | 0; if (i < 0 || i >= H.sec.choices.length) return;
+  st.guess.pick = i;
+  hResult({ caught: id, guessed: true, guessOk: H.sec.choices[i].toLowerCase() === H.sec.word.toLowerCase(), pick: i });
+}
+function hResult(r) {
+  const st = H.st, imp = H.sec.imp;
+  const gains = {};
+  if (!r.aborted) {
+    const add = (id, n) => { gains[id] = (gains[id] || 0) + n; };
+    for (const [voter, to] of Object.entries(H.sec.votes)) if (to === imp) add(voter, 1);
+    if (r.caught === imp && !r.guessOk) for (const id of st.parts) { if (id !== imp) add(id, 1); }
+    else if (r.caught === imp && r.guessOk) add(imp, 2);
+    else add(imp, 3);
+    for (const [id, n] of Object.entries(gains)) { const p = hP(id); if (p) p.score += n; }
+  }
+  st.phase = "result"; H.deadline = 0; st.total = 0;
+  st.res = { imp, word: H.sec.word, cat: H.sec.catName, caught: r.caught ?? null, tie: !!r.tie, guessed: !!r.guessed,
+    guessOk: !!r.guessOk, pick: r.pick ?? null, choices: H.sec.choices, votes: H.sec.votes, gains, aborted: r.aborted || null };
+  hPublish();
+}
+function hNext() {
+  const st = H.st;
+  if (st.set.rounds && st.round >= st.set.rounds) { st.phase = "final"; H.deadline = 0; hPublish(); }
+  else hNewRound();
+}
+function hEnd() { H.st.phase = "final"; H.deadline = 0; H.sec = H.sec || null; hPublish(); }
+function hPlayAgain() {
+  const st = H.st;
+  for (const p of st.players) { p.score = 0; p.wait = false; p.ready = false; }
+  Object.assign(st, { phase: "lobby", round: 0, rid: "", parts: [], order: [], k: 0, done: 0, cands: [], voted: [], guess: null, res: null });
+  H.impCount = {}; H.deadline = 0;
+  hPublish();
+}
+function hRemove(id) {
+  const st = H.st;
+  if (id === H.me.id) return;
+  const p = hP(id); if (!p) return;
+  st.players = st.players.filter((x) => x.id !== id);
+  hPriv(id, { t: "kick" });
+  if (inRound() && st.parts.includes(id)) {
+    if (id === H.sec.imp) return hResult({ aborted: "imp" });
+    st.parts = st.parts.filter((x) => x !== id);
+    if (st.parts.length < 3) return hResult({ aborted: "few" });
+    if (st.phase === "draw") {
+      const wasCurrent = st.order[st.k] === id;
+      st.order = st.order.filter((x, i) => i <= st.k || x !== id);
+      if (wasCurrent) return hEndTurn();
+    } else if (st.phase === "reveal") {
+      st.order = st.order.filter((x) => x !== id);
+      hCheckReady();
+    } else if (st.phase === "vote") {
+      delete H.sec.votes[id];
+      for (const [v, to] of Object.entries(H.sec.votes)) if (to === id) delete H.sec.votes[v];
+      st.cands = st.cands.filter((x) => x !== id);
+      st.voted = Object.keys(H.sec.votes);
+      if (st.cands.length < 2) { hPublish(); return hTally(); }
+      hCheckVotes();
+    }
+  }
+  hPublish();
+}
+function hSkipRound() { if (inRound()) { H.sec.votes = {}; hResult({ aborted: "skip" }); } }
+function hTick() {
+  if (!H) return;
+  const st = H.st, t0 = now();
+  let changed = false;
+  for (const p of st.players) { const on = hOnline(p.id); if (on !== p.on) { p.on = on; changed = true; } }
+  if (changed) { hPublish(); hCheckReady(); hCheckVotes(); }
+  if (st.phase === "draw" && H.deadline && t0 > H.deadline + 1500) hEndTurn();
+  else if (st.phase === "guess" && H.deadline && t0 > H.deadline + 800) hResult({ caught: H.sec.imp, guessed: false, guessOk: false });
+  else if (t0 - (H.lastPub || 0) > 4000) hPublish();
+}
+function hostConnect() {
+  C.conn?.close();
+  const code = H.code, top = TOP(code);
+  C.code = code;
+  C.conn = relay(brokerFor(code), {
+    onStatus(up) { setDot(up); if (up) hPublish(); },
+    onMessage(topic, m) {
+      if (topic === top + "/h") hMsg(m);
+      else if (topic === top + "/d") { if (m.by !== H.me.id) { hDraw(m); onDraw(m); } }
+    },
+  });
+  C.conn.sub(top + "/h");
+  C.conn.sub(top + "/d");
+  clearTimeout(H.fallT);
+  if (!OVERRIDE && H.st.phase === "lobby" && H.st.players.length === 1) {
+    H.fallT = setTimeout(() => {
+      if (C.conn?.up || !H || H.st.players.length > 1) return;
+      H.brokerIdx = (H.brokerIdx + 1) % BROKERS.length;
+      H.code = makeCode(H.brokerIdx);
+      toast(t("hostFallback"));
+      hostConnect(); render();
+    }, 7000);
+  }
+}
+function hostStart(name, resume) {
+  if (!resume) hostCreate(name);
+  C.me = { id: H.me.id, name: H.me.name };
+  C.isHost = true; C.tv = false; C.screen = "room";
+  C.st = null; C.priv = null; C.gal = {}; C.galRid = "";
+  LANG = H.st.lang;
+  hostConnect();
+  clearInterval(C.hostTimer); C.hostTimer = setInterval(hTick, 250);
+  // replay what we already know
+  onState(JSON.parse(JSON.stringify(H.st)));
+  if (H.sec && inRound()) hSendRole(H.me.id);
+  for (const k of Object.keys(H.draw)) hSendDrawing(+k);
+  hPublish();
+  keepAwake();
+}
+
+// =====================================================================
+//  CLIENT — every device (host included) uses this to show the game.
+// =====================================================================
+const C = {
+  screen: "home", code: "", me: null, isHost: false, tv: false, conn: null,
+  st: null, stAt: 0, priv: null, gal: {}, galRid: "", live: null, my: null,
+  lastHello: 0, lastPing: 0, lastNeed: 0, joinAt: 0, key: "", upd: null,
+};
+function sendHost(m) {
+  m.id = C.me?.id || m.id;
+  if (C.isHost) hMsg(m);
+  else C.conn?.pub(TOP(C.code) + "/h", m);
+}
+function setDot(up) { const d = $("#cdot"); if (d) d.className = "dot " + (up ? "ok" : "bad"); C.up = up; }
+
+function joinRoom(code, name, tv) {
+  C.conn?.close();
+  code = code.toUpperCase();
+  C.code = code; C.tv = !!tv; C.isHost = false; C.screen = "room";
+  C.st = null; C.priv = null; C.gal = {}; C.galRid = ""; C.live = null; C.my = null; C.joinAt = now();
+  if (!tv) {
+    const saved = store.get("di_player");
+    const id = saved && saved.code === code ? saved.id : rid(8);
+    C.me = { id, name };
+    store.set("di_player", { code, id, name, ts: now() });
+  } else C.me = { id: "tv" + rid(4), name: "TV" };
+  document.body.classList.toggle("tv", !!tv);
+  const top = TOP(code);
+  C.conn = relay(brokerFor(code), {
+    onStatus(up) { setDot(up); if (up) hello(true); },
+    onMessage(topic, m) {
+      if (topic === top + "/s") onState(m);
+      else if (topic === top + "/d") { if (m.by !== C.me.id) onDraw(m); }
+      else if (topic === top + "/g") onGal(m);
+      else if (topic === top + "/p/" + C.me.id) onPriv(m);
+    },
+  });
+  for (const s of ["/s", "/d", "/g", "/p/" + C.me.id]) C.conn.sub(top + s);
+  keepAwake();
+  render();
+}
+function hello(force) {
+  if (!C.code || C.isHost || !C.conn) return;
+  if (!force && now() - C.lastHello < 2500) return;
+  C.lastHello = now();
+  sendHost({ t: "hello", name: C.me.name, tv: C.tv || undefined });
+}
+function onState(st) {
+  if (!st || (C.st && st.hid === C.st.hid && st.v < C.st.v && !C.isHost)) return;
+  const prev = C.st;
+  C.st = st; C.stAt = now();
+  if (st.lang !== LANG) LANG = st.lang;
+  if (st.rid !== C.galRid) { C.gal = {}; C.galRid = st.rid; C.live = null; }
+  if (!C.isHost && !C.tv && !st.players.some((p) => p.id === C.me.id)) {
+    if (now() - C.joinAt > 1500) hello();
+  }
+  // turn changed while I was drawing → wrap it up
+  if (C.my && !C.my.fin && (st.rid !== C.my.rid || st.k !== C.my.k || st.phase !== "draw")) finishMyTurn();
+  // copy the finished live drawing into the gallery straight away
+  if (prev && prev.rid === st.rid && C.live && C.live.k < st.done && !C.gal[C.live.k]) {
+    C.gal[C.live.k] = { pid: st.order[C.live.k], tok: C.live.tok.slice(), prov: true };
+  }
+  if (prev && prev.phase !== st.phase) {
+    if (st.phase === "reveal") { beep(520, .15); beep(780, .2); buzz(80); }
+    if (st.phase === "vote") { beep(440, .15); buzz(60); }
+    if (st.phase === "result") beep(880, .25);
+  }
+  if (st.phase === "draw" && (!prev || prev.k !== st.k || prev.rid !== st.rid) && st.order[st.k] === C.me?.id) { beep(700, .12); setTimeout(() => beep(990, .18), 140); buzz([60, 40, 60]); }
+  render();
+}
+function onPriv(m) {
+  if (!m) return;
+  if (m.t === "role") { C.priv = m; render(); }
+  else if (m.t === "resume") {
+    const my = C.my;
+    if (!my || my.fin || my.rid !== m.rid || my.k !== m.k || my.resumed || !m.tok.length) return;
+    my.resumed = true;
+    const tok = m.tok.concat([OP_E], my.tok);
+    my.tok = tok; my.board.load(tok);
+    pubDraw({ rid: my.rid, k: my.k, full: true, tok });
+    my.sent = tok.length; my.snapLen = tok.length; my.lastSnap = now();
+  }
+  else if (m.t === "kick") { leaveRoom(); toast(t("removed")); }
+  else if (m.t === "full") { leaveRoom(); toast(t("full")); }
+}
+function onDraw(m) {
+  const st = C.st;
+  if (!st || m.rid !== st.rid) return;
+  if (C.live && m.k < C.live.k) return;
+  if (!C.live || C.live.k !== m.k) C.live = { k: m.k, tok: [], board: null };
+  const L = C.live;
+  let added = null, reload = false;
+  if (m.full || m.fin) {
+    if (m.tok.length !== L.tok.length || m.fin) { L.tok = m.tok.slice(); reload = true; }
+  } else if (m.from === L.tok.length) { added = m.tok; L.tok.push(...m.tok); }
+  else if (m.from < L.tok.length && m.from + m.tok.length > L.tok.length) { added = m.tok.slice(L.tok.length - m.from); L.tok.push(...added); }
+  const b = C.live.board;
+  if (b && b.k === m.k) { if (reload) b.load(L.tok); else if (added) b.push(added); }
+  if (m.fin && !C.gal[m.k]) C.gal[m.k] = { pid: m.by, tok: L.tok.slice(), prov: true };
+}
+function onGal(m) {
+  if (!C.st || m.rid !== C.st.rid) return;
+  const old = C.gal[m.k];
+  if (old && !old.prov && old.tok.length >= m.tok.length) return;
+  C.gal[m.k] = { pid: m.pid, tok: m.tok, sk: m.sk };
+  thumbCache.delete(C.st.rid + ":" + m.k);
+  C.galDirty = true;
+}
+function leaveRoom(sendLeave) {
+  if (sendLeave && !C.isHost && C.code) sendHost({ t: "leave" });
+  if (C.isHost) { store.set("di_host", null); clearInterval(C.hostTimer); H = null; }
+  else store.set("di_player", null);
+  setTimeout(() => C.conn?.close(), sendLeave ? 300 : 0);
+  Object.assign(C, { screen: "home", code: "", isHost: false, tv: false, st: null, priv: null, gal: {}, live: null, my: null, key: "" });
+  document.body.classList.remove("tv");
+  history.replaceState(null, "", location.pathname + (OVERRIDE ? "?broker=" + encodeURIComponent(OVERRIDE) : ""));
+  render();
+}
+
+// ---- my drawing turn ----
+function startMyTurn(board) {
+  const st = C.st;
+  C.my = { rid: st.rid, k: st.k, board, tok: [], sent: 0, lastSnap: now(), snapLen: 0, fin: false };
+  board.enableInput((arr) => { if (C.my && C.my.board === board && !C.my.fin) C.my.tok.push(...arr); });
+  clearInterval(C.my.flushT);
+  C.my.flushT = setInterval(flushMyTurn, 100);
+}
+function pubDraw(m) {
+  m.by = C.me.id;
+  C.conn?.pub(TOP(C.code) + "/d", m);
+  if (C.isHost) hDraw(m);
+}
+function flushMyTurn() {
+  const my = C.my;
+  if (!my || my.fin) return;
+  if (my.tok.length > my.sent) {
+    pubDraw({ rid: my.rid, k: my.k, from: my.sent, tok: my.tok.slice(my.sent) });
+    my.sent = my.tok.length;
+  }
+  if (now() - my.lastSnap > 2500 && my.snapLen !== my.tok.length) {
+    my.lastSnap = now(); my.snapLen = my.tok.length;
+    pubDraw({ rid: my.rid, k: my.k, full: true, tok: my.tok });
+  }
+}
+function finishMyTurn() {
+  const my = C.my;
+  if (!my || my.fin) return;
+  my.board.stop?.();
+  flushMyTurn();
+  my.fin = true; clearInterval(my.flushT);
+  C.gal[my.k] = C.gal[my.k] || { pid: C.me.id, tok: my.tok.slice(), prov: true };
+  pubDraw({ rid: my.rid, k: my.k, fin: true, tok: my.tok });
+  // send the final copy twice in case one gets lost
+  setTimeout(() => { if (C.st && C.st.rid === my.rid) pubDraw({ rid: my.rid, k: my.k, fin: true, tok: my.tok }); }, 900);
+}
+
+// ---- client timer loop ----
+const deadline = () => C.st ? C.stAt + (C.st.left || 0) : 0;
+function clientTick() {
+  const st = C.st;
+  if (C.screen === "room" && C.code) {
+    if (!C.isHost) {
+      if (!st) hello();
+      else if (now() - C.stAt > 12000) { $("#hostBanner") || $("#main").prepend(el("div", { class: "banner", id: "hostBanner" }, "⏳ " + t("hostBack"))); hello(); }
+      else $("#hostBanner")?.remove();
+      if (!C.tv && now() - C.lastPing > 5000) { C.lastPing = now(); sendHost({ t: "ping" }); }
+      if (st && !C.tv && C.priv?.rid !== st.rid && ["reveal", "draw", "vote", "guess"].includes(st.phase) && st.parts.includes(C.me.id)) hello();
+    }
+    if (st && ["draw", "vote", "guess", "result"].includes(st.phase) && !C.isHost) {
+      const miss = [];
+      for (let k = 0; k < st.done; k++) if (!C.gal[k] || C.gal[k].prov) miss.push(k);
+      if (miss.length && now() - C.lastNeed > 3000 && now() - C.stAt < 12000) { C.lastNeed = now(); sendHost({ t: "need", ks: miss }); }
+    }
+    if (C.galDirty) { C.galDirty = false; C.updGal?.(); }
+  }
+  tickFrame();
+}
+let lastTickSec = -1;
+function tickFrame() {
+  const st = C.st;
+  if (!st || !st.total) return;
+  const left = Math.max(0, deadline() - now()), s = Math.ceil(left / 1000);
+  document.querySelectorAll(".timer").forEach((e) => { e.textContent = s; e.classList.toggle("low", s <= 5); });
+  document.querySelectorAll(".tbar").forEach((e) => { e.firstChild.style.width = (100 * left) / st.total + "%"; e.classList.toggle("low", s <= 5); });
+  if (st.phase === "draw" && s !== lastTickSec) {
+    lastTickSec = s;
+    if (s <= 5 && s > 0) beep(st.order[st.k] === C.me?.id ? 880 : 600, 0.06, 0.08);
+  }
+  if (C.my && !C.my.fin && st.phase === "draw" && st.k === C.my.k && left <= 0) { finishMyTurn(); render(); }
+}
+setInterval(clientTick, 150);
+
+// =====================================================================
+//  SCREENS
+// =====================================================================
+function screen(...kids) { const m = $("#main"); m.innerHTML = ""; m.append(...kids.filter(Boolean)); window.scrollTo(0, 0); }
+function header() {
+  const st = C.st;
+  const right = $("#right"); right.innerHTML = "";
+  const me = $("#me");
+  if (C.screen === "room" && C.code) {
+    me.textContent = (C.tv ? "📺 " : "") + (C.me && !C.tv ? C.me.name + " · " : "") + C.code;
+    right.append(el("span", { id: "cdot", class: "dot " + (C.up ? "ok" : "bad") }));
+    right.append(el("button", { class: "icon", title: t("sound"), onclick: () => { muted = !muted; store.set("di_mute", muted); header(); } }, muted ? "🔇" : "🔊"));
+    right.append(el("button", { class: "icon", title: t("menu"), onclick: openMenu }, "☰"));
+  } else {
+    me.textContent = "🕵️ " + t("title");
+    right.append(el("div", { class: "seg" },
+      ["en", "es"].map((l) => el("button", { class: LANG === l ? "on" : "", onclick: () => { LANG = l; store.set("di_lang", l); render(); } }, l.toUpperCase()))));
+  }
+}
+function modal(...kids) {
+  const m = el("div", { class: "modal", onclick: (e) => { if (e.target === m) m.remove(); } }, el("div", { class: "box" }, ...kids));
+  document.body.append(m);
+  return m;
+}
+function openMenu() {
+  const st = C.st;
+  let m;
+  const items = [];
+  if (C.isHost && st) {
+    if (st.phase === "draw") items.push(el("button", { class: "btn ghost", onclick: () => { m.remove(); hEndTurn(); } }, "⏭ " + t("skipTurn")));
+    if (["reveal", "draw", "vote", "guess"].includes(st.phase)) items.push(el("button", { class: "btn ghost", onclick: () => { m.remove(); hSkipRound(); } }, "🔄 " + t("skipRound")));
+    if (st.phase !== "lobby" && st.phase !== "final") items.push(el("button", { class: "btn ghost", onclick: () => { if (confirm(t("endConfirm"))) { m.remove(); hEnd(); } } }, "🏁 " + t("endGame")));
+  }
+  items.push(el("button", { class: "btn ghost", onclick: () => { m.remove(); showRules(); } }, "❓ " + t("howTo")));
+  items.push(el("button", { class: "btn", onclick: () => { if (confirm(t("leaveConfirm"))) { m.remove(); leaveRoom(true); } } }, "🚪 " + t("leave")));
+  items.push(el("button", { class: "btn ghost", onclick: () => m.remove() }, t("close")));
+  m = modal(el("h2", {}, t("menu")), items);
+}
+function showRules() {
+  modal(el("h2", {}, t("howTo")), el("ol", { class: "rules" }, t("rules").map((r) => el("li", {}, r))), el("p", { class: "small muted" }, t("scoring")),
+    el("button", { class: "btn ghost", onclick: (e) => e.target.closest(".modal").remove() }, t("close")));
+}
+function zoom(tok, key, title) {
+  modal(title ? el("h3", {}, title) : null, el("img", { src: drawingImg(tok, key) }),
+    el("button", { class: "btn ghost", onclick: (e) => e.target.closest(".modal").remove() }, t("close")));
+}
+const pName = (id) => C.st?.players.find((p) => p.id === id)?.name || "?";
+const pObj = (id) => C.st?.players.find((p) => p.id === id);
+
+function render() {
+  header();
+  if (C.screen === "home") return homeScreen();
+  if (C.screen === "hostSetup") return hostSetupScreen();
+  if (C.screen === "join") return joinScreen();
+  const st = C.st;
+  if (!st) {
+    C.key = "";
+    return screen(el("div", { class: "card center" }, el("h2", {}, t("findingRoom", { code: C.code })),
+      el("p", { class: "muted", id: "findMsg" }, t("connecting")),
+      el("button", { class: "btn ghost sm", onclick: () => leaveRoom() }, t("back"))));
+  }
+  const iAmIn = st.parts.includes(C.me.id) && !C.tv;
+  const myTurn = st.phase === "draw" && st.order[st.k] === C.me.id;
+  const key = [st.phase, st.rid, st.phase === "draw" ? st.k : "", st.vr, myTurn, !!C.priv && C.priv.rid === st.rid, iAmIn, LANG].join("|");
+  if (key === C.key && C.upd) { C.upd(); return; }
+  C.key = key; C.upd = null; C.updGal = null;
+  ({ lobby: lobbyScreen, reveal: revealScreen, draw: drawScreen, vote: voteScreen, guess: guessScreen, result: resultScreen, final: finalScreen }[st.phase] || lobbyScreen)();
+  C.upd?.();
+}
+
+// ---- home ----
+function homeScreen() {
+  const hs = store.get("di_host"), ps = store.get("di_player");
+  const fresh = (x) => x && now() - x.ts < 6 * 3600e3;
+  const resume = [];
+  if (fresh(hs)) resume.push(el("div", { class: "card" },
+    el("button", { class: "btn teal", onclick: () => { H = hs.H; hostStart(null, true); } }, "▶ " + t("resumeHost", { code: hs.H.code })),
+    el("button", { class: "btn ghost sm", onclick: () => { store.set("di_host", null); render(); } }, t("forget"))));
+  else if (fresh(ps) && ps.name) resume.push(el("div", { class: "card" },
+    el("button", { class: "btn teal", onclick: () => joinRoom(ps.code, ps.name) }, "▶ " + t("resumeJoin", { code: ps.code })),
+    el("button", { class: "btn ghost sm", onclick: () => { store.set("di_player", null); render(); } }, t("forget"))));
+  screen(
+    LANG === "es" ? el("div", { class: "logo" }, el("b", {}, "Impostor"), " ", el("span", {}, "de Garabatos"), " 🕵️")
+      : el("div", { class: "logo" }, el("span", {}, "Doodle"), " ", el("b", {}, "Impostor"), " 🕵️"),
+    el("p", { class: "tag" }, t("tagline")),
+    resume,
+    el("button", { class: "btn", onclick: () => { C.screen = "hostSetup"; render(); } }, "🎨 " + t("host")),
+    el("button", { class: "btn imp", onclick: () => { C.screen = "join"; render(); } }, "📱 " + t("join")),
+    el("div", { class: "card" }, el("h3", {}, t("howTo")), el("ol", { class: "rules" }, t("rules").map((r) => el("li", {}, r))),
+      el("p", { class: "small muted" }, t("scoring"))),
+    el("p", { class: "hint" }, t("relayNote")),
+  );
+}
+function nameField(id) {
+  return [el("label", { class: "f", for: id }, t("yourName")),
+    el("input", { class: "t", id, maxlength: 16, placeholder: t("namePh"), autocomplete: "nickname", value: store.get("di_name") || "" })];
+}
+function hostSetupScreen() {
+  const go = (e) => {
+    e?.preventDefault();
+    const name = $("#hn").value.trim();
+    if (!name) { toast(t("nameTaken")); return; }
+    store.set("di_name", name);
+    hostStart(name);
+  };
+  screen(el("form", { class: "card", onsubmit: go }, el("h2", {}, "🎨 " + t("host")), nameField("hn"),
+    el("button", { class: "btn", type: "submit" }, t("create"))),
+    el("button", { class: "btn ghost", onclick: () => { C.screen = "home"; render(); } }, t("back")));
+  setTimeout(() => { const i = $("#hn"); if (i && !i.value) i.focus(); }, 50);
+}
+function joinScreen() {
+  const pre = (params.get("room") || "").toUpperCase();
+  const go = (e, tv) => {
+    e?.preventDefault();
+    const code = $("#jc").value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    const name = $("#jn")?.value.trim();
+    if (code.length !== 5 || [...code].some((c) => !ALPH.includes(c))) { toast(t("roomCode") + "?"); $("#jc").focus(); return; }
+    if (!tv && !name) { toast(t("nameTaken")); $("#jn").focus(); return; }
+    if (!tv) store.set("di_name", name);
+    joinRoom(code, name, tv);
+  };
+  screen(el("form", { class: "card", onsubmit: (e) => go(e, false) }, el("h2", {}, "📱 " + t("join")),
+    el("label", { class: "f", for: "jc" }, t("roomCode")),
+    el("input", { class: "t code-in", id: "jc", maxlength: 5, autocomplete: "off", autocapitalize: "characters", value: pre, placeholder: "ABCDE" }),
+    nameField("jn"),
+    el("button", { class: "btn imp", type: "submit" }, t("joinBtn"))),
+    el("button", { class: "btn ghost sm", onclick: (e) => go(e, true) }, "📺 " + t("tvMode")),
+    el("button", { class: "btn ghost", onclick: () => { C.screen = "home"; render(); } }, t("back")));
+  setTimeout(() => { const i = pre ? $("#jn") : $("#jc"); if (i && !i.value) i.focus(); }, 50);
+}
+
+// ---- shared bits ----
+function playersCard(editable) {
+  const st = C.st;
+  const box = el("div", { class: "players" });
+  let last = "";
+  const fill = () => {
+    const k = JSON.stringify(C.st.players.map((p) => [p.id, p.name, p.on, p.col])) + C.st.hostId;
+    if (k === last) return; last = k;
+    box.innerHTML = "";
+    for (const p of C.st.players) {
+      const tags = [];
+      if (p.id === C.st.hostId) tags.push("👑");
+      if (p.id === C.me?.id) tags.push("(" + t("you") + ")");
+      box.append(el("span", { class: "chip" + (p.on ? "" : " off") }, avatar(p), p.name, tags.length ? el("span", { class: "muted small" }, tags.join(" ")) : null,
+        editable && p.id !== C.st.hostId ? el("button", { class: "x", onclick: () => { if (confirm(t("removeConfirm", { name: p.name }))) hRemove(p.id); } }, "✕") : null));
+    }
+  };
+  fill();
+  const h = el("h3", {}, t("players") + " (" + st.players.length + ")");
+  const fill2 = () => { fill(); h.textContent = t("players") + " (" + C.st.players.length + ")"; };
+  return { el: el("div", { class: "card" }, h, box), fill: fill2 };
+}
+function scoreList(gains) {
+  const st = C.st;
+  const sorted = st.players.slice().sort((a, b) => b.score - a.score);
+  return el("div", {}, sorted.map((p) => el("div", { class: "score" }, avatar(p), el("span", { class: "n" }, p.name + (p.id === C.me?.id ? " (" + t("you") + ")" : "")),
+    gains && gains[p.id] ? el("span", { class: "g" }, "+" + gains[p.id]) : el("span", { class: "g" }),
+    el("span", { class: "p" }, p.score))));
+}
+function seg(opts, val, on, disabled) {
+  return el("div", { class: "seg" }, opts.map(([v, label]) =>
+    el("button", { class: v === val ? "on" : "", disabled: disabled || null, type: "button", onclick: () => on(v) }, label)));
+}
+function roundLabel() {
+  const st = C.st;
+  return st.set.rounds ? t("roundOf", { n: st.round, m: st.set.rounds }) : t("round", { n: st.round });
+}
+function peekBox() {
+  const st = C.st;
+  if (C.tv || !st.parts.includes(C.me.id)) return null;
+  const pv = C.priv && C.priv.rid === st.rid ? C.priv : null;
+  const b = el("div", { class: "peek" }, t("holdPeek"));
+  const show = (e) => {
+    e.preventDefault();
+    if (!pv) { b.textContent = t("gettingSecret"); return; }
+    b.innerHTML = "";
+    if (pv.role === "imp") b.append(el("span", {}, "🕵️ ", el("b", {}, t("youImp").replace("🕵️ ", "")), pv.cat ? " · " + pv.cat : ""));
+    else b.append(el("span", {}, t("secretWord") + ": ", el("b", {}, pv.word), pv.cat ? " · " + pv.cat : ""));
+  };
+  const hide = () => { b.textContent = t("holdPeek"); };
+  b.addEventListener("pointerdown", show); b.addEventListener("pointerup", hide); b.addEventListener("pointerleave", hide); b.addEventListener("pointercancel", hide);
+  b.addEventListener("contextmenu", (e) => e.preventDefault());
+  return b;
+}
+function galleryStrip() {
+  const st = C.st;
+  const box = el("div", { class: "gal" });
+  const fill = () => {
+    box.innerHTML = "";
+    const n = C.st.done;
+    if (!n) { box.append(el("p", { class: "muted small" }, t("noDrawings"))); return; }
+    for (let k = n - 1; k >= 0; k--) {
+      const g = C.gal[k], pid = C.st.order[k], p = pObj(pid);
+      const key = C.st.rid + ":" + k + ":" + (g ? g.tok.length : 0);
+      box.append(el("div", { class: "thumb", onclick: () => g && !g.sk && zoom(g.tok, key, p?.name) },
+        g && !g.sk ? el("img", { src: drawingImg(g.tok, key), alt: "" }) : el("div", { class: "ph" }, g?.sk ? "💤" : "⏳"),
+        el("span", {}, (p?.name || "?") + (g?.sk ? " · " + t("skipped") : ""))));
+    }
+  };
+  fill();
+  C.updGal = fill;
+  return el("div", { class: "card" }, el("h3", {}, t("drawingsSoFar")), box);
+}
+
+// ---- lobby ----
+function lobbyScreen() {
+  const st = C.st, host = C.isHost;
+  const link = joinUrl(C.code);
+  const pc = playersCard(host);
+  const share = el("div", { class: "card center" },
+    el("div", { class: "muted small" }, t("roomCode")), el("div", { class: "code" }, C.code),
+    (host || C.tv) ? el("div", { class: "qr", html: QR.svg(link) }) : null,
+    (host || C.tv) ? el("p", { class: "small muted" }, t("shareHint")) : null,
+    host ? el("div", { class: "row" },
+      el("button", { class: "btn ghost sm", onclick: async () => { try { await navigator.clipboard.writeText(link); toast(t("linkCopied")); } catch { prompt("", link); } } }, "🔗 " + t("copyLink")),
+      navigator.share ? el("button", { class: "btn ghost sm", onclick: () => navigator.share({ title: t("title"), text: t("roomCode") + ": " + C.code, url: link }).catch(() => {}) }, "📤 " + t("share")) : null) : null);
+  const setBox = el("div", { class: "card" });
+  const fillSet = () => {
+    const s = C.st.set;
+    setBox.innerHTML = "";
+    setBox.append(el("h3", {}, "⚙️ " + t("settings")));
+    if (host) {
+      const ch = (fn) => { fn(H.st.set); hPublish(); };
+      const sel = el("select", { class: "t", onchange: (e) => ch((x) => { x.cat = e.target.value; }) },
+        el("option", { value: "mix" }, "🎲 " + t("mix")),
+        CATS.map((c) => el("option", { value: c.id }, c.e + " " + c[LANG])),
+        el("option", { value: "custom" }, "✏️ " + t("custom")));
+      sel.value = s.cat;
+      setBox.append(el("div", { class: "set" },
+        el("span", { class: "k" }, t("category")), sel,
+        el("span", { class: "k" }, t("drawTime")), seg([[20, "20s"], [30, "30s"], [45, "45s"], [60, "60s"]], s.time, (v) => ch((x) => { x.time = v; })),
+        el("span", { class: "k" }, t("turns")), seg([[0, t("auto")], [1, "1"], [2, "2"]], s.laps, (v) => ch((x) => { x.laps = v; })),
+        el("span", { class: "k" }, t("rounds")), seg([[3, "3"], [5, "5"], [8, "8"], [0, "∞"]], s.rounds, (v) => ch((x) => { x.rounds = v; })),
+        el("span", { class: "k" }, t("hint")), seg([[true, t("on")], [false, t("off")]], s.hint, (v) => ch((x) => { x.hint = v; })),
+        el("span", { class: "k" }, t("language")), seg([["en", "English"], ["es", "Español"]], C.st.lang, (v) => { H.st.lang = v; LANG = v; hPublish(); }),
+      ));
+      if (s.cat === "custom") {
+        const ta = el("textarea", { class: "t", placeholder: "pizza, castle, robot…" });
+        ta.value = H.custom.join(", ");
+        const cnt = el("p", { class: "small muted" }, t("customN", { n: H.custom.length }));
+        ta.addEventListener("input", () => { cnt.textContent = t("customN", { n: new Set(ta.value.split(/[,\n]/).map((x) => x.trim()).filter(Boolean)).size }); });
+        ta.addEventListener("change", () => {
+          H.custom = [...new Set(ta.value.split(/[,\n]/).map((x) => x.trim()).filter(Boolean).map((x) => x.slice(0, 30)))];
+          H.used = {}; H.st.customN = H.custom.length; hPublish();
+        });
+        setBox.append(el("p", { class: "small muted" }, t("customHint")), ta, cnt);
+      }
+    } else {
+      const c = CATS.find((x) => x.id === s.cat);
+      setBox.append(el("div", { class: "summary" },
+        el("span", {}, s.cat === "mix" ? "🎲 " + t("mix") : s.cat === "custom" ? "✏️ " + t("custom") : c.e + " " + c[LANG]),
+        el("span", {}, "⏱ " + s.time + "s"), el("span", {}, "🔁 " + t("turns") + ": " + (s.laps || t("auto"))),
+        el("span", {}, "🏁 " + t("rounds") + ": " + (s.rounds || "∞")), el("span", {}, "🕵️ " + t("hint") + ": " + (s.hint ? t("on") : t("off")))));
+    }
+  };
+  fillSet();
+  const startBox = el("div", {});
+  let lastStart = "";
+  const fillStart = () => {
+    const n = C.st.players.filter((p) => p.on).length;
+    const sk = n + ":" + C.st.set.cat + ":" + C.st.customN;
+    if (sk === lastStart) return; lastStart = sk;
+    startBox.innerHTML = "";
+    if (host) {
+      const customBad = C.st.set.cat === "custom" && H.custom.length < 1;
+      startBox.append(el("button", { class: "btn teal", disabled: n < 3 || customBad || null, onclick: () => hNewRound() }, "▶ " + t("start")));
+      if (n < 3) startBox.append(el("p", { class: "hint" }, t("need3")));
+    } else if (!C.tv) startBox.append(el("p", { class: "center muted" }, el("span", { class: "wobble", style: "display:inline-block" }, "✏️"), " " + t("waitHost")));
+  };
+  fillStart();
+  screen(el("h2", { class: "center" }, t("lobby")), share, startBox, pc.el, setBox,
+    el("button", { class: "btn ghost sm", onclick: showRules }, "❓ " + t("howTo")));
+  let lastSet = "";
+  C.upd = () => { pc.fill(); fillStart(); const sj = JSON.stringify(C.st.set) + C.st.lang + C.st.customN; if (sj !== lastSet) { lastSet = sj; if (!host || !setBox.contains(document.activeElement)) fillSet(); } };
+}
+
+// ---- reveal ----
+function revealScreen() {
+  const st = C.st;
+  C.revealKey = "";
+  const status = el("p", { class: "center muted" });
+  const ctrl = el("div", {});
+  const kids = [el("h2", { class: "center" }, roundLabel())];
+  if (C.tv || !st.parts.includes(C.me.id)) {
+    kids.push(el("div", { class: "card center" }, el("h2", {}, "🤫 " + (LANG === "es" ? "¡Revisen su palabra secreta!" : "Everyone, check your secret word!")),
+      !C.tv ? el("p", {}, t("newPlayer")) : null));
+  } else {
+    const pv = C.priv && C.priv.rid === st.rid ? C.priv : null;
+    const card = el("div", { class: "secret" });
+    const cover = () => { card.innerHTML = ""; card.append(el("div", { class: "cover" }, pv ? t("holdSecret") : t("gettingSecret"))); };
+    const show = (e) => {
+      e.preventDefault();
+      if (!pv) return;
+      C.seen = st.rid;
+      card.innerHTML = "";
+      if (pv.role === "imp") card.append(el("div", { class: "word" }, t("youImp")), el("div", { class: "lbl" }, pv.cat ? t("category2", { c: pv.cat }) : t("noCat")), el("p", {}, t("impTip")));
+      else card.append(el("div", { class: "lbl" }, t("secretWord")), el("div", { class: "word" }, pv.word), pv.cat ? el("div", { class: "lbl" }, t("category2", { c: pv.cat })) : null, el("p", {}, t("crewTip")));
+      readyBtn.disabled = false;
+    };
+    card.addEventListener("pointerdown", show);
+    for (const ev of ["pointerup", "pointerleave", "pointercancel"]) card.addEventListener(ev, cover);
+    card.addEventListener("contextmenu", (e) => e.preventDefault());
+    cover();
+    const readyBtn = el("button", { class: "btn teal", disabled: C.seen === st.rid ? null : true, onclick: () => { sendHost({ t: "ready" }); readyBtn.disabled = true; readyBtn.textContent = "✓"; } }, t("ready"));
+    kids.push(card, readyBtn);
+  }
+  kids.push(status, ctrl);
+  screen(...kids);
+  C.upd = () => {
+    const s = C.st, parts = s.parts.map(pObj).filter(Boolean);
+    const r = parts.filter((p) => p.ready).length;
+    const rk = JSON.stringify(parts.map((p) => [p.name, p.ready]));
+    if (rk === C.revealKey) return; C.revealKey = rk;
+    status.innerHTML = "";
+    status.append(t("readyWait", { n: r, m: parts.length }), el("div", { class: "players", style: "justify-content:center" },
+      parts.map((p) => el("span", { class: "chip" + (p.ready ? "" : " off") }, avatar(p), p.name, p.ready ? " ✓" : ""))));
+    const me = pObj(C.me.id);
+    const rb = $(".btn.teal");
+    if (me?.ready && rb && !C.tv) { rb.disabled = true; rb.textContent = "✓ " + t("ready"); }
+    ctrl.innerHTML = "";
+    if (C.isHost) ctrl.append(el("button", { class: "btn ghost", onclick: () => hStartDraw() }, "⏩ " + t("startDrawing")));
+  };
+}
+
+// ---- drawing ----
+function drawScreen() {
+  const st = C.st, drawer = st.order[st.k], mine = drawer === C.me.id && !C.tv;
+  const dp = pObj(drawer);
+  const cv = el("canvas", {});
+  const wrap = el("div", { class: "boardwrap" + (mine ? " mine" : "") }, cv);
+  const board = new Board(cv);
+  const nxt = st.order[st.k + 1];
+  const who = el("div", { class: "who" }, mine ? t("yourTurn") : t("isDrawing", { name: dp?.name || "?" }));
+  const top = el("div", {},
+    el("div", { class: "muted small" }, roundLabel() + " · " + t("turnN", { n: st.k + 1, m: st.order.length })),
+    el("div", { class: "turnbar" }, mine ? null : avatar(dp), who, el("div", { class: "timer" }, "")),
+    el("div", { class: "tbar" }, el("i")),
+    el("div", { class: "order" }, st.order.map((id, i) => avatar(pObj(id) || { name: "?", col: 0 }, i === st.k ? "now" : i < st.k ? "done" : ""))),
+    nxt && !mine ? el("div", { class: "small muted" }, nxt === C.me.id ? "⚡ " + t("youNext") : t("upNext", { name: pName(nxt) })) : null);
+  const kids = [];
+  let tools = null;
+  if (mine) {
+    if (C.my && C.my.rid === st.rid && C.my.k === st.k) {
+      // screen rebuilt during my turn: keep the drawing and tools
+      const old = C.my.board;
+      board.load(C.my.tok);
+      if (!C.my.fin) {
+        board.enableInput((arr) => { if (C.my && C.my.board === board && !C.my.fin) C.my.tok.push(...arr); });
+        board.tool = old.tool || "pen"; board.color = old.color || 0; board.size = old.size ?? 1;
+        C.my.board = board;
+      }
+    } else {
+      // If we reloaded mid-turn, pick up whatever the others already saw
+      if (C.live && C.live.k === st.k && C.live.tok.length) board.load(C.live.tok);
+      startMyTurn(board);
+      if (board.tok.length) { C.my.tok = board.tok.slice(); C.my.sent = C.my.tok.length; C.my.resumed = true; }
+      else sendHost({ t: "resume", rid: st.rid, k: st.k }); // in case I reloaded mid-turn
+    }
+    const done = C.my.fin;
+    if (done) wrap.append(el("div", { class: "over" }, "✓"));
+    const tb = (id, icon, title, fn) => el("button", { "data-t": id, title, onclick: fn }, icon);
+    const sel = () => {
+      tools.querySelectorAll(".tools button[data-t]").forEach((b) => b.classList.toggle("on", b.dataset.t === board.tool));
+      tools.querySelectorAll(".colors button").forEach((b, i) => b.classList.toggle("on", i === board.color && board.tool !== "eraser"));
+      tools.querySelectorAll(".sizes button").forEach((b, i) => b.classList.toggle("on", i === board.size));
+    };
+    tools = el("div", {},
+      el("div", { class: "tools" },
+        tb("pen", "✏️", t("tools").pen, () => { board.tool = "pen"; sel(); }),
+        tb("fill", "🪣", t("tools").fill, () => { board.tool = "fill"; sel(); }),
+        tb("eraser", "🧽", t("tools").eraser, () => { board.tool = "eraser"; sel(); }),
+        el("button", { title: t("tools").undo, onclick: () => board.act("undo") }, "↩️"),
+        el("button", { title: t("tools").clear, onclick: () => board.act("clear") }, "🗑️")),
+      el("div", { class: "colors" }, PAL.map((c, i) => el("button", { style: `background:${c}`, "aria-label": c, onclick: () => { board.color = i; if (board.tool === "eraser") board.tool = "pen"; sel(); } }))),
+      el("div", { class: "sizes" }, SIZES.map((s, i) => el("button", { onclick: () => { board.size = i; sel(); } }, el("i", { style: `width:${Math.max(6, s * 0.55)}px;height:${Math.max(6, s * 0.55)}px` })))),
+      el("button", { class: "btn teal", disabled: done || null, onclick: () => { finishMyTurn(); wrap.append(el("div", { class: "over" }, "✓")); tools.querySelector(".btn.teal").disabled = true; } }, t("done")));
+    sel();
+  } else {
+    if (!C.live || C.live.k !== st.k) C.live = { k: st.k, tok: [], board: null };
+    board.load(C.live.tok);
+    board.k = st.k;
+    C.live.board = board;
+  }
+  if (C.tv) {
+    screen(el("div", { class: "drawgrid" }, el("div", {}, top, wrap), el("div", {}, galleryStrip())));
+  } else {
+    kids.push(top, wrap);
+    if (tools) kids.push(tools);
+    kids.push(peekBox());
+    if (!st.parts.includes(C.me.id)) kids.push(el("p", { class: "hint" }, t("newPlayer")));
+    kids.push(galleryStrip());
+    screen(...kids);
+  }
+  C.upd = () => {
+    C.updGal?.();
+    if (mine && C.my?.fin && !wrap.querySelector(".over")) {
+      wrap.append(el("div", { class: "over" }, "⏰ " + t("timesUp")));
+      const b = tools?.querySelector(".btn.teal"); if (b) b.disabled = true;
+    }
+  };
+}
+
+// ---- vote ----
+function voteScreen() {
+  const st = C.st, iAmIn = st.parts.includes(C.me.id) && !C.tv;
+  const grid = el("div", { class: "vgrid" });
+  const status = el("p", { class: "center muted" });
+  const ctrl = el("div", {});
+  let myVote = C.myVote && C.myVote.rid === st.rid && C.myVote.vr === st.vr ? C.myVote.to : null;
+  const fillGrid = () => {
+    grid.innerHTML = "";
+    for (const id of C.st.cands) {
+      const p = pObj(id);
+      const ks = C.st.order.map((x, k) => (x === id ? k : -1)).filter((k) => k >= 0);
+      const pics = el("div", { class: "pics" + (ks.length === 1 ? " one" : "") }, ks.map((k) => {
+        const g = C.gal[k], key = C.st.rid + ":" + k + ":" + (g ? g.tok.length : 0);
+        return g && !g.sk ? el("img", { src: drawingImg(g.tok, key), onclick: () => zoom(g.tok, key, p?.name) }) : el("div", { class: "ph" }, g?.sk ? "💤" : "⏳");
+      }));
+      const isMe = id === C.me.id;
+      grid.append(el("div", { class: "vcard" + (myVote === id ? " pick" : "") },
+        el("div", { class: "nm" }, avatar(p), el("span", {}, p?.name || "?"), C.st.voted.includes(id) ? el("span", { class: "small muted" }, "✓") : null),
+        pics,
+        iAmIn ? el("button", { class: "btn" + (myVote === id ? "" : " ghost"), disabled: isMe || null,
+          onclick: () => { myVote = id; C.myVote = { rid: C.st.rid, vr: C.st.vr, to: id }; sendHost({ t: "vote", to: id }); beep(600, .08); fillGrid(); } },
+          isMe ? t("yourCard") : myVote === id ? t("voted") : t("vote")) : null));
+    }
+  };
+  fillGrid();
+  screen(el("h2", { class: "center" }, t("voteTitle")),
+    el("p", { class: "center" }, st.vr === 2 ? el("b", {}, t("revote", { names: st.cands.map(pName).join(", ") })) : t("voteSub")),
+    !iAmIn && !C.tv ? el("p", { class: "hint" }, t("notInRound")) : null,
+    status, ctrl, grid, peekBox());
+  C.upd = () => {
+    const s = C.st;
+    const voters = s.parts.filter((id) => pObj(id)?.on || s.voted.includes(id));
+    status.textContent = "🗳️ " + t("votesIn", { n: s.voted.length, m: voters.length });
+    ctrl.innerHTML = "";
+    if (C.isHost && s.voted.length) ctrl.append(el("button", { class: "btn ghost", onclick: () => hTally() }, "📣 " + t("revealVotes")));
+    refresh();
+  };
+  let gk = "";
+  const refresh = () => {
+    const k = C.st.voted.join() + "|" + C.st.cands.map((id) => C.st.order.map((x, i) => (x === id ? (C.gal[i]?.tok.length ?? -1) : "")).join()).join(";");
+    if (k !== gk) { gk = k; fillGrid(); }
+  };
+  C.updGal = refresh;
+}
+
+// ---- impostor's last guess ----
+function guessScreen() {
+  const st = C.st, g = st.guess, isImp = g.imp === C.me.id && !C.tv;
+  const p = pObj(g.imp);
+  screen(el("div", { class: "reveal" }, el("div", { class: "big" }, "🕵️ " + t("caught", { name: p?.name || "?" }))),
+    el("div", { class: "turnbar" }, el("div", { class: "who" }, isImp ? t("lastChance") : t("guessing", { name: p?.name || "?" })), el("div", { class: "timer" })),
+    el("div", { class: "tbar" }, el("i")),
+    el("div", { class: "choices" }, g.choices.map((w, i) => el("button", { class: "btn " + (isImp ? "imp" : "ghost"), disabled: !isImp || null,
+      onclick: (e) => { sendHost({ t: "guess", i }); document.querySelectorAll(".choices .btn").forEach((b) => (b.disabled = true)); e.target.classList.add("pulse"); } }, w))));
+  if (isImp) buzz([100, 50, 100]);
+  C.upd = null;
+}
+
+// ---- round result ----
+function resultScreen() {
+  const st = C.st, r = st.res, imp = pObj(r.imp), impName = imp?.name || "?";
+  let cls = "", head = "", sub = "";
+  if (r.aborted) { cls = "none"; head = t("aborted"); sub = r.aborted === "imp" ? t("abortImp") : r.aborted === "few" ? t("abortFew") : ""; }
+  else if (r.caught === r.imp && !r.guessOk) { cls = "crew"; head = t("crewWins"); sub = t("impWas", { name: impName }); }
+  else if (r.caught === r.imp && r.guessOk) { head = t("impSteal"); sub = t("impWas", { name: impName }); }
+  else if (r.tie) { head = t("tieEscape"); sub = t("impWas", { name: impName }); }
+  else { head = t("innocent", { name: pName(r.caught) }); sub = t("impWas", { name: impName }); }
+  const kids = [el("div", { class: "reveal " + cls },
+    el("div", { class: "big" }, head), el("p", {}, sub),
+    el("div", {}, t("wordWas") + ":"), el("div", { class: "w" }, r.word))];
+  if (r.guessed && r.pick != null && r.choices) kids.push(el("p", { class: "center" }, t("guessed", { name: impName, w: r.choices[r.pick] }) + (r.guessOk ? " ✅" : " ❌")));
+  else if (r.caught === r.imp && !r.aborted) kids.push(el("p", { class: "center muted" }, t("noGuess", { name: impName })));
+  if (r.imp === C.me.id && !C.tv && !r.aborted) { r.caught === r.imp && !r.guessOk ? buzz(300) : buzz([80, 60, 80, 60, 80]); }
+  // impostor's drawings
+  const ks = st.order.map((x, k) => (x === r.imp ? k : -1)).filter((k) => k >= 0 && C.gal[k] && !C.gal[k].sk);
+  if (ks.length) kids.push(el("div", { class: "card" }, el("h3", {}, t("impDrawings")),
+    el("div", { class: "gal" }, ks.map((k) => { const g = C.gal[k], key = st.rid + ":" + k + ":" + g.tok.length; return el("div", { class: "thumb", onclick: () => zoom(g.tok, key, impName) }, el("img", { src: drawingImg(g.tok, key) })); }))));
+  if (!r.aborted && Object.keys(r.votes || {}).length) kids.push(el("div", { class: "card votes" }, el("h3", {}, t("votesList")),
+    st.parts.map((id) => el("div", {}, el("b", {}, pName(id)), " → ", r.votes[id] ? pName(r.votes[id]) + (r.votes[id] === r.imp ? " 🎯" : "") : el("span", { class: "muted" }, t("noVote"))))));
+  kids.push(el("div", { class: "card" }, el("h3", {}, "🏆 " + t("scores")), scoreList(r.gains)));
+  if (C.isHost) {
+    const last = st.set.rounds && st.round >= st.set.rounds;
+    kids.push(el("button", { class: "btn teal", onclick: () => hNext() }, last ? t("finalResults") : t("nextRound")));
+    if (!last) kids.push(el("button", { class: "btn ghost", onclick: () => { if (confirm(t("endConfirm"))) hEnd(); } }, "🏁 " + t("endGame")));
+  } else kids.push(el("p", { class: "center muted" }, t("waitNext")));
+  screen(...kids);
+  C.upd = null;
+}
+
+// ---- final ----
+function finalScreen() {
+  const st = C.st;
+  const sorted = st.players.slice().sort((a, b) => b.score - a.score);
+  const top = sorted[0];
+  const tied = sorted.filter((p) => top && p.score === top.score);
+  const podium = el("div", { class: "podium" });
+  const spots = [[sorted[1], 90, "#b8b8c8", "🥈"], [sorted[0], 130, "#f2b400", "🥇"], [sorted[2], 70, "#d08a4e", "🥉"]];
+  for (const [p, h, c, m] of spots) if (p) podium.append(el("div", { style: `min-height:${h}px;background:${c}` }, el("div", {}, m), el("div", { class: "n" }, p.name), el("div", {}, p.score)));
+  screen(el("h1", { class: "center" }, "🎉 " + t("gameOver")),
+    el("h2", { class: "center" }, tied.length > 1 ? t("tie2") : t("winner", { name: top?.name || "?" })),
+    podium,
+    el("div", { class: "card" }, scoreList()),
+    C.isHost ? el("button", { class: "btn teal", onclick: () => hPlayAgain() }, "🔁 " + t("playAgain")) : el("p", { class: "center muted" }, t("waitNext")));
+  if (st.players.length) { beep(660, .12); setTimeout(() => beep(880, .12), 150); setTimeout(() => beep(1100, .25), 300); }
+  C.upd = null;
+}
+
+// ---------------------------------------------------------------------
+//  Start up
+// ---------------------------------------------------------------------
+(function boot() {
+  const l = store.get("di_lang"); if (l === "en" || l === "es") LANG = l;
+  const room = (params.get("room") || "").toUpperCase();
+  const ps = store.get("di_player");
+  if (room) {
+    if (ps && ps.code === room && ps.name && now() - ps.ts < 6 * 3600e3) return joinRoom(room, ps.name);
+    C.screen = "join";
+  } else if (ps && ps.name && now() - ps.ts < 30 * 60e3 && !store.get("di_host")) {
+    // came back within 30 minutes (e.g. phone reloaded) → rejoin automatically
+    return joinRoom(ps.code, ps.name);
+  } else {
+    const hs = store.get("di_host");
+    if (hs && now() - hs.ts < 30 * 60e3) { H = hs.H; return hostStart(null, true); }
+  }
+  render();
+})();
+</script>
+</body>
+</html>
