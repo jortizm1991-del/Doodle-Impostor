@@ -153,6 +153,12 @@ body.tv .vgrid{grid-template-columns:repeat(4,1fr)}
 .podium{display:flex;align-items:flex-end;justify-content:center;gap:8px;margin:18px 0 6px}
 .podium>div{flex:1;max-width:120px;line-height:1.2;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;text-align:center;border-radius:14px 14px 0 0;color:#fff;padding:8px 4px;font-weight:800;font-family:"Baloo 2",system-ui,sans-serif}
 .podium .n{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.who.long{font-size:18px}
+.who-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:2px dashed var(--line);font-weight:700;cursor:pointer}
+.who-row:last-child{border-bottom:0}
+.who-row img,.who-row .ph{width:64px;height:64px;flex:none;border-radius:10px;border:2px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center}
+.banner.lock{background:#2a2238;color:#fff;border-color:#2a2238;text-align:center;font-size:17px}
+.takes{display:flex;flex-wrap:wrap;gap:6px}.takes .btn{margin:0}
 .twist{background:#e9e1ff;border:2px solid #cbb8ff;border-radius:16px;padding:10px 12px;margin:8px 0;text-align:center}
 .secret .role{font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;font-size:24px;color:#ff8fb1;margin-bottom:4px}
 .sablayer{position:absolute;inset:0;pointer-events:none}
@@ -210,6 +216,7 @@ const T = {
       "Take turns drawing something RELATED to the word (not the word itself). Everyone watches each drawing appear live.",
       "The impostor watches, figures out the word, and draws something that fits in.",
       "😈 Sabotage (optional): the impostor and a secret saboteur can each sneak onto ONE other player's drawing while it's being made, to either add something OR erase something.",
+      "🔒 Takeover (optional): once per round the impostor can secretly draw someone else's turn, locking that player out of it.",
       "Then vote: who's the impostor, who's the saboteur, and whose drawing fit the word best ⭐.",
       "If the impostor is caught, they get one last chance to guess the word and steal the win!",
     ],
@@ -222,7 +229,7 @@ const T = {
     copyLink: "Copy link", share: "Share link", linkCopied: "Link copied",
     players: "Players", need3: "You need at least 3 players.", start: "Start game",
     waitHost: "Waiting for the host to start…",
-    settings: "Settings", category: "Words", mix: "Mix of everything", custom: "My own words",
+    settings: "Settings", category: "Words", mix: "Mix of everything (no 18+)", custom: "My own words",
     customHint: "Type words separated by commas or new lines (at least 8 is best).",
     customN: "{n} custom words", drawTime: "Draw time", turns: "Turns each", auto: "Auto", rounds: "Rounds", endless: "∞",
     hint: "Impostor sees category", on: "On", off: "Off", language: "Language", sec: "{n}s",
@@ -264,8 +271,19 @@ const T = {
     relayNote: "Each phone needs internet. Drawings and names pass through a free public relay.",
     nameTaken: "Pick a name", hostFallback: "Trying another relay…",
     modes: "Game modes", cats: "Categories", twist: "Twist", sabotage: "Sabotage",
-    twists: { none: "None", blind: "🙈 Blind drawing", oneline: "✍️ One line only", speed: "⚡ Speed (15s)", random: "🎲 Random each round" },
-    twistDesc: { blind: "You can't see your own drawing while you draw!", oneline: "One stroke only: once you lift your finger, you're done!", speed: "Only 15 seconds to draw!" },
+    twists: { none: "🎨 Normal", blind: "🙈 Blind drawing", oneline: "✍️ One line only", speed: "⚡ Speed (15s)", swap: "🔀 Secret swap", random: "🎲 Random each round" },
+    twistDesc: { none: "No twist this round. Draw like normal!", blind: "You can't see your own drawing while you draw!", oneline: "One stroke only: once you lift your finger, you're done!", speed: "Only 15 seconds to draw!",
+      swap: "Everyone secretly draws for someone else! Drawings show up under the wrong names — talk it out." },
+    normalMode: "Normal (classic)", take: "Impostor takeover",
+    takeHint: "Once per round the impostor can secretly draw another player's turn — that player is locked out for that drawing (4+ players).",
+    youSwap: "🔀 You're secretly drawing for {name}!", swapDrawing: "🔀 {name}'s drawing — who's really drawing it? 🤫",
+    youTake: "🔒 You took over {name}'s turn — act natural!", lockedOut: "🔒 Someone took over your turn! You're locked out for this drawing.",
+    lockedNext: "🔒 Your next turn was taken over!", swapFor: "🔀 This round you'll secretly draw for: {names}",
+    takeTitle: "🔒 Take over a turn", takePick: "Pick an upcoming turn to draw yourself. That player gets locked out for it.",
+    takeNone: "No turns can be taken over right now.", takeOk: "🔒 Done! You'll secretly draw {name}'s turn.", takeNo: "That turn can't be taken over.",
+    turnShort: "Turn {n}: {name}", whoDrew: "🔀 Who really drew what", drawnBy: "{owner}'s drawing → drawn by {artist}",
+    tookOver: "🔒 The impostor took over {name}'s turn", swapVoteNote: "🔀 Secret swap round: the drawings are under the wrong names!",
+    drawnByShort: "drawn by {name}", nextSwap: "Up next: {name}'s drawing",
     twistNow: "Twist this round: {t}", blindCover: "🙈 Drawing blind!", oneLineTip: "✍️ One stroke only — don't lift your finger!",
     sabHint: "The impostor and a secret saboteur (4+ players) can each mess with one drawing.",
     adultNote: "🔞 After Dark words are for adults only.",
@@ -297,6 +315,7 @@ const T = {
       "Por turnos, dibujen algo RELACIONADO con la palabra (no la palabra misma). Todos ven cada dibujo en vivo.",
       "El impostor observa, intenta adivinar la palabra y dibuja algo que encaje.",
       "😈 Sabotaje (opcional): el impostor y un saboteador secreto pueden meterse en UN dibujo de otro jugador mientras lo hace, para agregar algo O borrar algo.",
+      "🔒 Toma de turno (opcional): una vez por ronda el impostor puede dibujar en secreto el turno de otra persona, que queda bloqueada.",
       "Luego voten: quién es el impostor, quién es el saboteador y qué dibujo encajó mejor con la palabra ⭐.",
       "Si atrapan al impostor, tiene una última oportunidad: ¡si adivina la palabra, se roba la victoria!",
     ],
@@ -309,7 +328,7 @@ const T = {
     copyLink: "Copiar enlace", share: "Compartir enlace", linkCopied: "Enlace copiado",
     players: "Jugadores", need3: "Necesitan al menos 3 jugadores.", start: "Empezar",
     waitHost: "Esperando a que el anfitrión empiece…",
-    settings: "Ajustes", category: "Palabras", mix: "De todo un poco", custom: "Mis propias palabras",
+    settings: "Ajustes", category: "Palabras", mix: "De todo un poco (sin 18+)", custom: "Mis propias palabras",
     customHint: "Escribe palabras separadas por comas o en líneas nuevas (mejor 8 o más).",
     customN: "{n} palabras propias", drawTime: "Tiempo", turns: "Turnos c/u", auto: "Auto", rounds: "Rondas", endless: "∞",
     hint: "Impostor ve la categoría", on: "Sí", off: "No", language: "Idioma", sec: "{n}s",
@@ -351,8 +370,19 @@ const T = {
     relayNote: "Cada teléfono necesita internet. Los dibujos y nombres pasan por un servidor público gratuito.",
     nameTaken: "Escribe un nombre", hostFallback: "Probando otro servidor…",
     modes: "Modos de juego", cats: "Categorías", twist: "Giro", sabotage: "Sabotaje",
-    twists: { none: "Ninguno", blind: "🙈 Dibujo a ciegas", oneline: "✍️ Una sola línea", speed: "⚡ Rápido (15s)", random: "🎲 Al azar cada ronda" },
-    twistDesc: { blind: "¡No puedes ver tu propio dibujo mientras dibujas!", oneline: "Un solo trazo: cuando levantes el dedo, ¡terminaste!", speed: "¡Solo 15 segundos para dibujar!" },
+    twists: { none: "🎨 Normal", blind: "🙈 Dibujo a ciegas", oneline: "✍️ Una sola línea", speed: "⚡ Rápido (15s)", swap: "🔀 Cambio secreto", random: "🎲 Al azar cada ronda" },
+    twistDesc: { none: "Sin giro esta ronda. ¡Dibuja normal!", blind: "¡No puedes ver tu propio dibujo mientras dibujas!", oneline: "Un solo trazo: cuando levantes el dedo, ¡terminaste!", speed: "¡Solo 15 segundos para dibujar!",
+      swap: "¡Cada quien dibuja en secreto por otra persona! Los dibujos aparecen con nombres equivocados: discútanlo." },
+    normalMode: "Normal (clásico)", take: "Toma de turno del impostor",
+    takeHint: "Una vez por ronda el impostor puede dibujar en secreto el turno de otro jugador, que queda bloqueado para ese dibujo (4+ jugadores).",
+    youSwap: "🔀 ¡Estás dibujando en secreto por {name}!", swapDrawing: "🔀 Dibujo de {name}: ¿quién lo está dibujando? 🤫",
+    youTake: "🔒 Tomaste el turno de {name}: ¡disimula!", lockedOut: "🔒 ¡Alguien tomó tu turno! Estás bloqueado para este dibujo.",
+    lockedNext: "🔒 ¡Tomaron tu próximo turno!", swapFor: "🔀 Esta ronda dibujarás en secreto por: {names}",
+    takeTitle: "🔒 Tomar un turno", takePick: "Elige un turno próximo para dibujarlo tú. Ese jugador quedará bloqueado.",
+    takeNone: "Ahora no se puede tomar ningún turno.", takeOk: "🔒 ¡Listo! Dibujarás en secreto el turno de {name}.", takeNo: "Ese turno no se puede tomar.",
+    turnShort: "Turno {n}: {name}", whoDrew: "🔀 Quién dibujó qué en realidad", drawnBy: "Dibujo de {owner} → lo dibujó {artist}",
+    tookOver: "🔒 El impostor tomó el turno de {name}", swapVoteNote: "🔀 Ronda de cambio secreto: ¡los dibujos tienen nombres equivocados!",
+    drawnByShort: "lo dibujó {name}", nextSwap: "Sigue: el dibujo de {name}",
     twistNow: "Giro de esta ronda: {t}", blindCover: "🙈 ¡Dibujando a ciegas!", oneLineTip: "✍️ Un solo trazo: ¡no levantes el dedo!",
     sabHint: "El impostor y un saboteador secreto (4+ jugadores) pueden arruinar un dibujo cada uno.",
     adultNote: "🔞 Las palabras de Después de medianoche son solo para adultos.",
@@ -479,9 +509,14 @@ const PACKS = {};
 for (const c of CATS) PACKS[c.id] = { id: c.id, e: c.e, en: c.en, es: c.es, kind: "cat", words: c.w.map(([en, es]) => ({ en, es, hen: c.en, hes: c.es })) };
 for (const m of MODES) PACKS[m.id] = { id: m.id, e: m.e, en: m.en, es: m.es, kind: "mode", adult: !!m.adult,
   words: m.g.flatMap((g) => g.w.map(([en, es]) => ({ en, es, hen: g.en, hes: g.es }))) };
-const catName = (id, lang = LANG) => id === "custom" ? T[lang].customCat : id === "mix" ? T[lang].mix : (PACKS[id]?.[lang] || id);
-const packLabel = (id) => id === "mix" ? "🎲 " + t("mix") : id === "custom" ? "✏️ " + t("custom") : PACKS[id] ? PACKS[id].e + " " + PACKS[id][LANG] : id;
-const TWISTS = ["none", "blind", "oneline", "speed", "random"];
+// 🎨 Normal = the classic game: all 10 everyday categories.  🎲 Mix = Normal + Easy + Kids + Hard (never 18+).
+const NORMAL_IDS = CATS.map((c) => c.id);
+const MIX_IDS = [...NORMAL_IDS, "easy", "kids", "hard"];
+const packIds = (cat) => cat === "normal" ? NORMAL_IDS : cat === "mix" ? MIX_IDS : PACKS[cat] ? [cat] : NORMAL_IDS;
+const catName = (id, lang = LANG) => id === "custom" ? T[lang].customCat : id === "mix" ? T[lang].mix : id === "normal" ? T[lang].normalMode : (PACKS[id]?.[lang] || id);
+const packLabel = (id) => id === "normal" ? "🎨 " + t("normalMode") : id === "mix" ? "🎲 " + t("mix") : id === "custom" ? "✏️ " + t("custom") : PACKS[id] ? PACKS[id].e + " " + PACKS[id][LANG] : id;
+const TWISTS = ["none", "blind", "oneline", "speed", "swap", "random"];
+const RANDOM_TWISTS = ["none", "blind", "oneline", "speed", "swap"];
 const cap = (s) => s ? s.charAt(0).toLocaleUpperCase() + s.slice(1) : s;
 
 // ---------------------------------------------------------------------
@@ -958,10 +993,10 @@ function hostCreate(name) {
     code: makeCode(0), brokerIdx: 0, hid: rid(6), me: { id: meId, name },
     st: {
       hid: "", v: 0, phase: "lobby", lang: LANG, hostId: meId,
-      set: { cat: "mix", time: 30, laps: 0, rounds: 5, hint: true, twist: "none", sab: true },
+      set: { cat: "normal", time: 30, laps: 0, rounds: 5, hint: true, twist: "none", sab: true, take: false },
       players: [{ id: meId, name, score: 0, col: 0, on: true, ready: false, wait: false }],
       round: 0, rid: "", parts: [], order: [], k: 0, left: 0, total: 0, done: 0,
-      cands: [], voted: [], vr: 1, guess: null, res: null, customN: 0, twist: "none", sabRole: false, sabOn: false,
+      cands: [], voted: [], vr: 1, guess: null, res: null, customN: 0, twist: "none", sabRole: false, sabOn: false, takeOn: false,
     },
     sec: null, draw: {}, live: null, sabs: {}, seen: {}, impCount: {}, sabCount: {}, used: {}, custom: [], deadline: 0, lastImp: "",
   };
@@ -970,10 +1005,12 @@ function hostCreate(name) {
 }
 const hP = (id) => H.st.players.find((p) => p.id === id);
 const hOnline = (id) => id === H.me.id || now() - (H.seen[id] || 0) < 15000;
-function hSave() {
-  clearTimeout(hSave.t);
-  hSave.t = setTimeout(() => store.set("di_host", { ts: now(), H }), 300);
-}
+// Save the host's game so a reload can pick up where it left off.
+// Throttled (not debounced): a constant stream of brush strokes must not keep postponing the save.
+function hSaveNow() { clearTimeout(hSave.t); hSave.t = 0; if (H) store.set("di_host", { ts: now(), H }); }
+function hSave() { if (!hSave.t) hSave.t = setTimeout(hSaveNow, 300); }
+window.addEventListener("pagehide", () => H && hSaveNow());
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden" && H) hSaveNow(); });
 function hPublish() {
   const st = H.st; st.v++;
   st.left = H.deadline ? Math.max(0, H.deadline - now()) : 0;
@@ -989,9 +1026,23 @@ function hPriv(id, msg) {
 const inRound = () => ["reveal", "draw", "vote", "guess"].includes(H.st.phase);
 function hSendRole(id) {
   if (!H.sec || !inRound() || !H.st.parts.includes(id)) return;
-  const imp = id === H.sec.imp, sab = id === H.sec.sab;
+  const imp = id === H.sec.imp, sab = id === H.sec.sab, A = H.sec.artist;
+  // turns = the drawing slots I actually draw; locked = my turns the impostor took over
+  const turns = A.map((a, k) => (a === id ? k : -1)).filter((k) => k >= 0);
+  const locked = Object.entries(H.sec.takes).filter(([k, v]) => v.from === id).map(([k]) => +k);
   hPriv(id, { t: "role", rid: H.st.rid, role: imp ? "imp" : sab ? "sab" : "crew", canSab: H.sec.sabbers.includes(id),
+    canTake: imp && H.st.takeOn && !H.sec.takeUsed, turns, locked,
     word: imp ? null : H.sec.word, cat: !H.sec.hint || (imp && !H.st.set.hint) ? null : H.sec.hint });
+}
+const hArtist = (k) => H.sec?.artist?.[k] ?? H.st.order[k];
+// someone (re)connected mid-turn: send them the drawing so far, plus any sabotage on it
+function hSendLive() {
+  const st = H.st;
+  if (st.phase !== "draw" || !H.live || H.live.k !== st.k || now() - (H.liveSentAt || 0) < 500) return;
+  H.liveSentAt = now();
+  C.conn?.pub(TOP(H.code) + "/d", { rid: st.rid, k: st.k, full: true, tok: H.live.tok, by: hArtist(st.k) });
+  const sb = H.sabs[st.k];
+  if (sb && sb.tok.length) C.conn?.pub(TOP(H.code) + "/d", { rid: st.rid, k: st.k, sab: sb.key, full: true, tok: sb.tok, by: "~" });
 }
 function hSendDrawing(k) {
   const d = H.draw[k];
@@ -1014,7 +1065,7 @@ function hMsg(m) {
   if (p && fresh && !p.on) { p.on = true; hPublish(); }
   switch (m.t) {
     case "hello": {
-      if (m.tv) { if (now() - (H.lastPub || 0) > 300) hPublish(); return; }
+      if (m.tv) { if (now() - (H.lastPub || 0) > 300) hPublish(); hSendLive(); return; }
       if (!p) {
         if (st.players.length >= 12) { hPriv(m.id, { t: "full" }); return; }
         const used = new Set(st.players.map((x) => x.col));
@@ -1023,6 +1074,7 @@ function hMsg(m) {
       } else if (m.name && m.name.trim() && m.name.trim().slice(0, 16) !== p.name) p.name = uniqueName(m.name, p.id);
       hSendRole(m.id);
       hPublish();
+      hSendLive();
       break;
     }
     case "ready":
@@ -1033,7 +1085,7 @@ function hMsg(m) {
       // someone asks to sabotage the current drawing — only one sabotage per drawing, one per person per round
       const S = H.sec;
       if (st.phase === "draw" && S && m.rid === st.rid && m.k === st.k && S.sabbers.includes(m.id) && !S.sabUsed[m.id] &&
-          !H.sabs[st.k] && st.order[st.k] !== m.id && H.deadline - now() > 4000 && (m.mode === "add" || m.mode === "erase")) {
+          !H.sabs[st.k] && hArtist(st.k) !== m.id && H.deadline - now() > 4000 && (m.mode === "add" || m.mode === "erase")) {
         const key = rid(4);
         S.sabUsed[m.id] = true;
         H.sabs[st.k] = { by: m.id, key, tok: [], mode: m.mode };
@@ -1049,8 +1101,9 @@ function hMsg(m) {
         if (now() - (H.needT[k] || 0) > 2000) { H.needT[k] = now(); hSendDrawing(k); }
       }
       break;
+    case "take": hTake(m); break;
     case "resume":
-      if (st.phase === "draw" && m.rid === st.rid && m.k === st.k && st.order[st.k] === m.id && H.live && H.live.k === st.k)
+      if (st.phase === "draw" && m.rid === st.rid && m.k === st.k && hArtist(st.k) === m.id && H.live && H.live.k === st.k)
         hPriv(m.id, { t: "resume", rid: st.rid, k: st.k, tok: H.live.tok });
       break;
     case "leave": hRemove(m.id); break;
@@ -1074,7 +1127,7 @@ function hDraw(m) {
     hSave();
     return;
   }
-  if (m.by !== st.order[m.k]) return;
+  if (m.by !== hArtist(m.k)) return;
   if (m.k === st.k && st.phase === "draw") {
     if (!H.live || H.live.k !== m.k) H.live = { k: m.k, tok: [] };
     const L = H.live.tok;
@@ -1093,7 +1146,7 @@ function pickWord() {
   let pool;
   if (cat === "custom" && H.custom.length) pool = H.custom.map((_, i) => ({ c: "custom", i }));
   else {
-    const ids = PACKS[cat] ? [cat] : CATS.map((c) => c.id);
+    const ids = packIds(cat);
     pool = ids.flatMap((id) => PACKS[id].words.map((_, i) => ({ c: id, i })));
   }
   let avail = pool.filter((x) => !H.used[x.c + ":" + x.i]);
@@ -1149,14 +1202,64 @@ function hNewRound() {
     sab = pick(others.filter((id) => (H.sabCount[id] || 0) === minS));
     H.sabCount[sab] = (H.sabCount[sab] || 0) + 1;
   }
-  const twist = st.set.twist === "random" ? pick(["none", "blind", "oneline", "speed"]) : (st.set.twist || "none");
+  // Random twist: deal from a shuffled "bag" so every twist (Normal included) comes up before any repeats
+  let twist = st.set.twist || "none";
+  if (twist === "random") {
+    if (!H.twistBag || !H.twistBag.length) {
+      let bag = shuffle(RANDOM_TWISTS);
+      if (bag[0] === H.lastTwist) bag.push(bag.shift());
+      H.twistBag = bag;
+    }
+    twist = H.twistBag.shift();
+    H.lastTwist = twist;
+  }
+  // who actually draws each slot (normally the slot's owner; secretly someone else in a swap round)
+  let artist = order.slice();
+  if (twist === "swap") artist = swapArtists(order, parts, imp);
+  const takeOn = !!st.set.take && parts.length >= 4;
   H.sec = { w, word: cap(wordText(w)), hint: hintText(w), imp, sab, sabbers: sabOn ? [imp, sab] : [], sabUsed: {},
-    votes: {}, sabVotes: {}, bestVotes: {}, choices: null };
+    votes: {}, sabVotes: {}, bestVotes: {}, choices: null, artist, takes: {}, takeUsed: false };
   H.draw = {}; H.live = null; H.sabs = {}; H.deadline = 0;
   Object.assign(st, { phase: "reveal", round: st.round + 1, rid: rid(4), parts, order, k: 0, done: 0, cands: [], voted: [], vr: 1,
-    guess: null, res: null, twist, sabRole: !!sab, sabOn });
+    guess: null, res: null, twist, sabRole: !!sab, sabOn, takeOn });
   for (const id of parts) hSendRole(id);
   hPublish();
+}
+// Secret swap: in each lap, everybody draws exactly one slot that isn't their own (a derangement).
+// The impostor never draws the very first slot, so they always see at least one clue first.
+function swapArtists(order, parts, imp) {
+  const n = parts.length, out = [];
+  for (let start = 0; start < order.length; start += n) {
+    const lap = order.slice(start, start + n);
+    let best = null;
+    for (let tries = 0; tries < 300; tries++) {
+      const a = shuffle(lap);
+      if (a.some((x, i) => x === lap[i])) continue;
+      if (start === 0 && a[0] === imp) continue;
+      if (out.length && a[0] === out[out.length - 1]) continue;
+      best = a; break;
+    }
+    if (!best) best = lap.map((_, i) => lap[(i + 1) % lap.length]); // simple rotation always works
+    out.push(...best);
+  }
+  return out;
+}
+// Impostor takeover: once per round, the impostor secretly draws another player's upcoming turn.
+// That player is locked out for that one drawing (and knows it), everyone else just sees the normal turn.
+function hTake(m) {
+  const st = H.st, S = H.sec;
+  const k = m.k | 0;
+  const ok = st.phase === "draw" && S && m.rid === st.rid && st.takeOn && m.id === S.imp && !S.takeUsed &&
+    k > st.k && k < st.order.length && S.artist[k] !== S.imp && st.order[k] !== S.imp && !S.takes[k];
+  if (!ok) { hPriv(m.id, { t: "takeno", rid: st.rid }); return; }
+  const from = S.artist[k];
+  S.takes[k] = { from };
+  S.artist[k] = S.imp;
+  S.takeUsed = true;
+  hSendRole(S.imp);
+  hSendRole(from);
+  hPriv(m.id, { t: "takeok", rid: st.rid, k, owner: st.order[k] });
+  hSave();
 }
 function hCheckReady() {
   const st = H.st;
@@ -1173,7 +1276,7 @@ function hStartDraw() {
 function hNextTurn() {
   const st = H.st;
   st.k++;
-  while (st.k < st.order.length && !hOnline(st.order[st.k])) {
+  while (st.k < st.order.length && !hOnline(hArtist(st.k))) {
     H.draw[st.k] = { pid: st.order[st.k], tok: [], sk: true };
     st.done = st.k + 1; hSendDrawing(st.k); st.k++;
   }
@@ -1251,7 +1354,7 @@ function hGuess(id, i) {
 function hResult(r) {
   const st = H.st, imp = H.sec.imp;
   const gains = {};
-  let sabInfo = null, best = [];
+  let sabInfo = null, best = [], bestArtists = [];
   if (!r.aborted) {
     const add = (id, n) => { gains[id] = (gains[id] || 0) + n; };
     for (const [voter, to] of Object.entries(H.sec.votes)) if (to === imp) add(voter, 1);
@@ -1272,14 +1375,23 @@ function hResult(r) {
       sabInfo = { id: sid, caught, used };
     }
     const tb = tally(H.sec.bestVotes);
-    if (tb.max > 0) { best = tb.tops; for (const id of best) add(id, 1); }
+    if (tb.max > 0) {
+      best = tb.tops;
+      // the point goes to whoever REALLY drew the drawings shown under that name (matters for swaps/takeovers)
+      const winners = new Set();
+      st.order.forEach((owner, k) => { if (best.includes(owner) && H.draw[k] && !H.draw[k].sk) winners.add(H.sec.artist[k]); });
+      if (!winners.size) best.forEach((id) => winners.add(id));
+      bestArtists = [...winners];
+      for (const id of bestArtists) if (st.parts.includes(id)) add(id, 1);
+    }
     for (const [id, n] of Object.entries(gains)) { const p = hP(id); if (p) p.score += n; }
   }
   const sabs = Object.entries(H.sabs || {}).map(([k, v]) => ({ k: +k, by: v.by, role: v.by === imp ? "imp" : "sab", mode: v.mode }));
   st.phase = "result"; H.deadline = 0; st.total = 0;
   st.res = { imp, word: H.sec.word, caught: r.caught ?? null, tie: !!r.tie, guessed: !!r.guessed,
     guessOk: !!r.guessOk, pick: r.pick ?? null, choices: H.sec.choices, votes: H.sec.votes, gains, aborted: r.aborted || null,
-    sab: sabInfo, sabVotes: H.sec.sabVotes, best, bestVotes: H.sec.bestVotes, sabs: r.aborted ? [] : sabs };
+    sab: sabInfo, sabVotes: H.sec.sabVotes, best, bestArtists, bestVotes: H.sec.bestVotes, sabs: r.aborted ? [] : sabs,
+    artist: H.sec.artist.slice(), takes: Object.entries(H.sec.takes).map(([k, v]) => ({ k: +k, from: v.from })) };
   hPublish();
 }
 function hNext() {
@@ -1292,7 +1404,7 @@ function hPlayAgain() {
   const st = H.st;
   for (const p of st.players) { p.score = 0; p.wait = false; p.ready = false; }
   Object.assign(st, { phase: "lobby", round: 0, rid: "", parts: [], order: [], k: 0, done: 0, cands: [], voted: [], guess: null, res: null });
-  H.impCount = {}; H.sabCount = {}; H.deadline = 0;
+  H.impCount = {}; H.sabCount = {}; H.deadline = 0; H.twistBag = null;
   hPublish();
 }
 function hRemove(id) {
@@ -1302,20 +1414,28 @@ function hRemove(id) {
   st.players = st.players.filter((x) => x.id !== id);
   hPriv(id, { t: "kick" });
   if (inRound() && st.parts.includes(id)) {
+    const S = H.sec;
     if (id === H.sec.imp) return hResult({ aborted: "imp" });
     st.parts = st.parts.filter((x) => x !== id);
     if (st.parts.length < 3) return hResult({ aborted: "few" });
-    const S = H.sec;
     if (S.sab === id) { S.sab = null; st.sabRole = false; }
     S.sabbers = S.sabbers.filter((x) => x !== id);
     for (const V of [S.sabVotes, S.bestVotes]) { delete V[id]; for (const [v, to] of Object.entries(V)) if (to === id) delete V[v]; }
-    if (st.phase === "draw") {
-      const wasCurrent = st.order[st.k] === id;
-      st.order = st.order.filter((x, i) => i <= st.k || x !== id);
-      if (wasCurrent) return hEndTurn();
-    } else if (st.phase === "reveal") {
-      st.order = st.order.filter((x) => x !== id);
-      hCheckReady();
+    if (st.phase === "draw" || st.phase === "reveal") {
+      const from = st.phase === "draw" ? st.k : -1;
+      const wasCurrent = st.phase === "draw" && S.artist[st.k] === id;
+      const keep = [], order = [], artist = [];
+      st.order.forEach((owner, k) => {
+        if (k <= from) { order.push(owner); artist.push(S.artist[k]); return; }
+        if (owner === id) return; // their own future slots go away
+        let a = S.artist[k];
+        if (a === id) a = owner;  // slots they were drawing for someone else go back to the owner
+        order.push(owner); artist.push(a);
+      });
+      st.order = order; S.artist = artist;
+      for (const pid of st.parts) hSendRole(pid);
+      if (wasCurrent) { hPublish(); return hEndTurn(); }
+      if (st.phase === "reveal") hCheckReady();
     } else if (st.phase === "vote") {
       delete H.sec.votes[id];
       for (const [v, to] of Object.entries(H.sec.votes)) if (to === id) delete H.sec.votes[v];
@@ -1447,12 +1567,18 @@ function onState(st) {
     if (st.phase === "vote") { beep(440, .15); buzz(60); }
     if (st.phase === "result") beep(880, .25);
   }
-  if (st.phase === "draw" && (!prev || prev.k !== st.k || prev.rid !== st.rid) && st.order[st.k] === C.me?.id) { beep(700, .12); setTimeout(() => beep(990, .18), 140); buzz([60, 40, 60]); }
+  if (st.phase === "draw" && (!prev || prev.k !== st.k || prev.rid !== st.rid) && isMine(st.k)) { beep(700, .12); setTimeout(() => beep(990, .18), 140); buzz([60, 40, 60]); }
   render();
 }
 function onPriv(m) {
   if (!m) return;
-  if (m.t === "role") { C.priv = m; render(); }
+  if (m.t === "role") {
+    // my turns may have changed (takeover) → rebuild the screen, unless I'm in the middle of drawing
+    const changed = JSON.stringify([C.priv?.rid, C.priv?.turns, C.priv?.locked]) !== JSON.stringify([m.rid, m.turns, m.locked]);
+    C.priv = m;
+    if (changed && !(C.my && !C.my.fin)) C.key = "";
+    render();
+  }
   else if (m.t === "resume") {
     const my = C.my;
     if (!my || my.fin || my.rid !== m.rid || my.k !== m.k || my.resumed || !m.tok.length) return;
@@ -1463,6 +1589,8 @@ function onPriv(m) {
     my.sent = tok.length; my.snapLen = tok.length; my.lastSnap = now();
   }
   else if (m.t === "sabok") startSab(m);
+  else if (m.t === "takeok") { C.takeUsedRid = m.rid; toast(t("takeOk", { name: pName(m.owner) })); }
+  else if (m.t === "takeno") toast(t("takeNo"));
   else if (m.t === "sabno") { toast(m.used ? t("sabUsed") : t("sabNo")); if (m.used) C.sabUsedRid = m.rid; }
   else if (m.t === "kick") { leaveRoom(); toast(t("removed")); }
   else if (m.t === "full") { leaveRoom(); toast(t("full")); }
@@ -1493,7 +1621,7 @@ function onDraw(m) {
   else if (m.from < L.tok.length && m.from + m.tok.length > L.tok.length) { added = m.tok.slice(L.tok.length - m.from); L.tok.push(...added); }
   const b = C.live.board;
   if (b && b.k === m.k) { if (reload) b.load(L.tok); else if (added) b.push(added); }
-  if (m.fin && !C.gal[m.k]) C.gal[m.k] = { pid: m.by, tok: L.tok.slice(), prov: true };
+  if (m.fin && !C.gal[m.k]) C.gal[m.k] = { pid: st.order[m.k], tok: L.tok.slice(), prov: true };
 }
 function onGal(m) {
   if (!C.st || m.rid !== C.st.rid) return;
@@ -1547,25 +1675,53 @@ function finishMyTurn() {
   my.board.stop?.();
   flushMyTurn();
   my.fin = true; clearInterval(my.flushT);
-  C.gal[my.k] = C.gal[my.k] || { pid: C.me.id, tok: my.tok.slice(), prov: true };
+  C.gal[my.k] = C.gal[my.k] || { pid: C.st?.order[my.k], tok: my.tok.slice(), prov: true };
   pubDraw({ rid: my.rid, k: my.k, fin: true, tok: my.tok });
   // send the final copy twice in case one gets lost
   setTimeout(() => { if (C.st && C.st.rid === my.rid) pubDraw({ rid: my.rid, k: my.k, fin: true, tok: my.tok }); }, 900);
 }
 
+// ---- who draws what (swap twist + takeovers make this secret) ----
+const myPriv = () => (C.priv && C.st && C.priv.rid === C.st.rid ? C.priv : null);
+function isMine(k) {
+  const st = C.st;
+  if (!st || C.tv || k < 0 || k >= st.order.length) return false;
+  const pv = myPriv();
+  if (pv && pv.turns) return pv.turns.includes(k);
+  return st.twist !== "swap" && st.order[k] === C.me.id;
+}
+const isLocked = (k) => !!myPriv()?.locked?.includes(k);
+
 // ---- sabotage (impostor + saboteur, once per round) ----
 const SAB_SECS = 8, SAB_INK = { add: 650, erase: 900 };
+// 🎭 Secret action: sabotage the drawing happening now, and/or (impostor) take over an upcoming turn
 function askSab() {
-  const st = C.st, pv = C.priv && C.priv.rid === st.rid ? C.priv : null;
-  if (!pv || !pv.canSab) return toast(t("noAction"));
-  if (C.sabUsedRid === st.rid) return toast(t("sabUsed"));
+  const st = C.st, pv = myPriv();
+  const canSab = pv?.canSab && C.sabUsedRid !== st.rid;
+  const canTake = pv?.canTake && C.takeUsedRid !== st.rid;
+  if (!pv || (!pv.canSab && !pv.canTake)) return toast(t("noAction"));
+  if (!canSab && !canTake) return toast(t("sabUsed"));
   const k = st.k, rid0 = st.rid;
   let m;
   const go = (mode) => { m.remove(); if (C.st.k === k && C.st.rid === rid0) sendHost({ t: "sab", rid: rid0, k, mode }); };
-  m = modal(el("h2", {}, "😈 " + t("sabPick", { name: pName(st.order[k]) })),
+  const kids = [];
+  if (canSab) kids.push(el("h3", {}, "😈 " + t("sabPick", { name: pName(st.order[k]) })),
     el("button", { class: "btn imp", onclick: () => go("add") }, t("sabAdd")),
-    el("button", { class: "btn imp", onclick: () => go("erase") }, t("sabErase")),
-    el("button", { class: "btn ghost", onclick: () => m.remove() }, t("cancel")));
+    el("button", { class: "btn imp", onclick: () => go("erase") }, t("sabErase")));
+  if (canTake) {
+    const mine = pv.turns || [];
+    const ok = [];
+    for (let j = st.k + 1; j < st.order.length; j++) {
+      if (st.order[j] === C.me.id || mine.includes(j)) continue;
+      ok.push(j);
+    }
+    kids.push(el("h3", { style: "margin-top:14px" }, t("takeTitle")), el("p", { class: "small muted" }, t("takePick")));
+    if (!ok.length) kids.push(el("p", { class: "muted" }, t("takeNone")));
+    else kids.push(el("div", { class: "takes" }, ok.map((j) => el("button", { class: "btn ghost sm",
+      onclick: () => { m.remove(); sendHost({ t: "take", rid: rid0, k: j }); } }, t("turnShort", { n: j + 1, name: pName(st.order[j]) })))));
+  }
+  kids.push(el("button", { class: "btn ghost", onclick: () => m.remove() }, t("cancel")));
+  m = modal(...kids);
 }
 function startSab(m) {
   const st = C.st;
@@ -1640,7 +1796,7 @@ function tickFrame() {
   document.querySelectorAll(".tbar").forEach((e) => { e.firstChild.style.width = (100 * left) / st.total + "%"; e.classList.toggle("low", s <= 5); });
   if (st.phase === "draw" && s !== lastTickSec) {
     lastTickSec = s;
-    if (s <= 5 && s > 0) beep(st.order[st.k] === C.me?.id ? 880 : 600, 0.06, 0.08);
+    if (s <= 5 && s > 0) beep(isMine(st.k) ? 880 : 600, 0.06, 0.08);
   }
   if (C.my && !C.my.fin && st.phase === "draw" && st.k === C.my.k && left <= 0) { finishMyTurn(); render(); }
   if (C.mySab && !C.mySab.fin) {
@@ -1716,8 +1872,9 @@ function render() {
       el("button", { class: "btn ghost sm", onclick: () => leaveRoom() }, t("back"))));
   }
   const iAmIn = st.parts.includes(C.me.id) && !C.tv;
-  const myTurn = st.phase === "draw" && st.order[st.k] === C.me.id;
-  const key = [st.phase, st.rid, st.phase === "draw" ? st.k : "", st.vr, myTurn, !!C.priv && C.priv.rid === st.rid, iAmIn, LANG].join("|");
+  const myTurn = st.phase === "draw" && isMine(st.k);
+  const lockedNow = st.phase === "draw" && isLocked(st.k);
+  const key = [st.phase, st.rid, st.phase === "draw" ? st.k : "", st.vr, myTurn, lockedNow, !!C.priv && C.priv.rid === st.rid, iAmIn, LANG].join("|");
   if (key === C.key && C.upd) { C.upd(); return; }
   C.key = key; C.upd = null; C.updGal = null;
   ({ lobby: lobbyScreen, reveal: revealScreen, draw: drawScreen, vote: voteScreen, guess: guessScreen, result: resultScreen, final: finalScreen }[st.phase] || lobbyScreen)();
@@ -1858,7 +2015,7 @@ function galleryStrip() {
 }
 const twistLabel = (tw) => t("twists")[tw] || "";
 function twistBanner(tw) {
-  if (!tw || tw === "none") return null;
+  if (!tw || (tw === "none" && C.st?.set?.twist !== "random")) return null;
   return el("div", { class: "twist" }, el("b", {}, t("twistNow", { t: twistLabel(tw) })), el("div", { class: "small" }, t("twistDesc")[tw] || ""));
 }
 
@@ -1884,6 +2041,7 @@ function lobbyScreen() {
       const ch = (fn) => { fn(H.st.set); hPublish(); };
       const sel = el("select", { class: "t", onchange: (e) => ch((x) => { x.cat = e.target.value; }) },
         el("optgroup", { label: t("modes") },
+          el("option", { value: "normal" }, "🎨 " + t("normalMode")),
           el("option", { value: "mix" }, "🎲 " + t("mix")),
           MODES.map((m) => el("option", { value: m.id }, m.e + " " + m[LANG]))),
         el("optgroup", { label: t("cats") }, CATS.map((c) => el("option", { value: c.id }, c.e + " " + c[LANG]))),
@@ -1896,6 +2054,8 @@ function lobbyScreen() {
         el("span", { class: "k" }, t("category")), sel, adult,
         el("span", { class: "k" }, "😈 " + t("sabotage")), seg([[true, t("on")], [false, t("off")]], !!s.sab, (v) => ch((x) => { x.sab = v; })),
         el("span", { class: "small muted" }, t("sabHint")),
+        el("span", { class: "k" }, "🔒 " + t("take")), seg([[true, t("on")], [false, t("off")]], !!s.take, (v) => ch((x) => { x.take = v; })),
+        el("span", { class: "small muted" }, t("takeHint")),
         el("span", { class: "k" }, "🌀 " + t("twist")), tw,
         el("span", { class: "k" }, t("drawTime")), seg([[20, "20s"], [30, "30s"], [45, "45s"], [60, "60s"]], s.time, (v) => ch((x) => { x.time = v; })),
         el("span", { class: "k" }, t("turns")), seg([[0, t("auto")], [1, "1"], [2, "2"]], s.laps, (v) => ch((x) => { x.laps = v; })),
@@ -1918,6 +2078,7 @@ function lobbyScreen() {
       setBox.append(el("div", { class: "summary" },
         el("span", {}, packLabel(s.cat)),
         el("span", {}, "😈 " + t("sabotage") + ": " + (s.sab ? t("on") : t("off"))),
+        el("span", {}, "🔒 " + t("take") + ": " + (s.take ? t("on") : t("off"))),
         s.twist && s.twist !== "none" ? el("span", {}, "🌀 " + twistLabel(s.twist)) : null,
         el("span", {}, "⏱ " + s.time + "s"), el("span", {}, "🔁 " + t("turns") + ": " + (s.laps || t("auto"))),
         el("span", {}, "🏁 " + t("rounds") + ": " + (s.rounds || "∞")), el("span", {}, "🕵️ " + t("hint") + ": " + (s.hint ? t("on") : t("off")))), adult);
@@ -1969,6 +2130,9 @@ function revealScreen() {
       else add(pv.role === "sab" ? el("div", { class: "role" }, t("youSab")) : null,
         el("div", { class: "lbl" }, t("secretWord")), el("div", { class: "word" }, pv.word), pv.cat ? el("div", { class: "lbl" }, t("category2", { c: pv.cat })) : null,
         el("p", {}, pv.role === "sab" ? t("sabTip") : t("crewTip")));
+      if (st.twist === "swap" && pv.turns?.length)
+        add(el("p", { class: "lbl", style: "color:#ffd84a" }, t("swapFor", { names: [...new Set(pv.turns.map((k) => pName(st.order[k])))].join(", ") })));
+      if (pv.canTake) add(el("p", { class: "lbl" }, "🔒 " + t("takeHint")));
       readyBtn.disabled = false;
     };
     card.addEventListener("pointerdown", show);
@@ -1998,8 +2162,10 @@ function revealScreen() {
 
 // ---- drawing ----
 function drawScreen() {
-  const st = C.st, drawer = st.order[st.k], mine = drawer === C.me.id && !C.tv;
+  const st = C.st, drawer = st.order[st.k], mine = isMine(st.k), locked = isLocked(st.k);
   const dp = pObj(drawer);
+  const swapRound = st.twist === "swap";
+  const takenByMe = mine && drawer !== C.me.id && !swapRound;
   const cv = el("canvas", {}), ovc = el("canvas", { class: "sablayer" });
   const wrap = el("div", { class: "boardwrap" + (mine ? " mine" : "") }, cv, ovc);
   const board = new Board(cv), overlay = new Board(ovc, true);
@@ -2013,14 +2179,22 @@ function drawScreen() {
     C.liveSab.board = overlay;
   }
   const nxt = st.order[st.k + 1];
-  const who = el("div", { class: "who" }, mine ? t("yourTurn") : t("isDrawing", { name: dp?.name || "?" }));
+  const whoText = mine ? (swapRound ? t("youSwap", { name: dp?.name || "?" }) : takenByMe ? t("youTake", { name: dp?.name || "?" }) : t("yourTurn"))
+    : swapRound ? t("swapDrawing", { name: dp?.name || "?" }) : t("isDrawing", { name: dp?.name || "?" });
+  const who = el("div", { class: "who" + (whoText.length > 26 ? " long" : "") }, whoText);
+  const nextText = nxt === undefined || mine ? null
+    : isMine(st.k + 1) ? "⚡ " + t("youNext")
+    : isLocked(st.k + 1) ? t("lockedNext")
+    : swapRound ? t("nextSwap", { name: pName(nxt) })
+    : t("upNext", { name: pName(nxt) });
   const top = el("div", {},
     el("div", { class: "muted small" }, roundLabel() + " · " + t("turnN", { n: st.k + 1, m: st.order.length }) +
       (st.twist && st.twist !== "none" ? " · " + twistLabel(st.twist) : "")),
     el("div", { class: "turnbar" }, mine ? null : avatar(dp), who, el("div", { class: "timer" }, "")),
     el("div", { class: "tbar" }, el("i")),
     el("div", { class: "order" }, st.order.map((id, i) => avatar(pObj(id) || { name: "?", col: 0 }, i === st.k ? "now" : i < st.k ? "done" : ""))),
-    nxt && !mine ? el("div", { class: "small muted" }, nxt === C.me.id ? "⚡ " + t("youNext") : t("upNext", { name: pName(nxt) })) : null);
+    nextText ? el("div", { class: "small muted" }, nextText) : null,
+    locked ? el("div", { class: "banner lock" }, t("lockedOut")) : null);
   const kids = [];
   let tools = null;
   const oneLine = st.twist === "oneline";
@@ -2070,7 +2244,7 @@ function drawScreen() {
   }
   // 🎭 secret action: every player sees it, so having it gives nothing away
   const sabBox = el("div", {});
-  const canSee = st.sabOn && !mine && !C.tv && st.parts.includes(C.me.id);
+  const canSee = (st.sabOn || st.takeOn) && !mine && !C.tv && st.parts.includes(C.me.id);
   const fillSab = () => {
     sabBox.innerHTML = "";
     const S = C.mySab;
@@ -2146,6 +2320,7 @@ function voteScreen() {
     vr2 ? el("p", { class: "center" }, el("b", {}, t("revote", { names: st.cands.map(pName).join(", ") })))
       : el("p", { class: "center small" }, t("voteSub") + " " + (kinds.length > 1 ? t("voteLegend") : "")),
     !iAmIn && !C.tv ? el("p", { class: "hint" }, t("notInRound")) : null,
+    st.twist === "swap" ? el("div", { class: "twist small" }, t("swapVoteNote")) : null,
     mineBox, status, ctrl, grid, peekBox());
   C.upd = () => {
     const s = C.st;
@@ -2192,7 +2367,9 @@ function resultScreen() {
   else if (r.caught === r.imp && !r.aborted) kids.push(el("p", { class: "center muted" }, t("noGuess", { name: impName })));
   if (r.sab && !r.aborted) kids.push(el("div", { class: "reveal sabr" }, el("div", { class: "big", style: "font-size:24px" }, t("sabWas", { name: pName(r.sab.id) })),
     el("div", {}, !r.sab.used ? t("sabLazy") : r.sab.caught ? t("sabCaught") : t("sabEscaped"))));
-  if (r.best && r.best.length) kids.push(el("div", { class: "card center" }, el("h3", {}, t("bestWas", { names: r.best.map(pName).join(", ") })),
+  const A = r.artist || st.order;
+  const artistNote = r.bestArtists && r.bestArtists.join() !== r.best?.join() ? " (" + t("drawnByShort", { name: r.bestArtists.map(pName).join(", ") }) + ")" : "";
+  if (r.best && r.best.length) kids.push(el("div", { class: "card center" }, el("h3", {}, t("bestWas", { names: r.best.map(pName).join(", ") }) + artistNote),
     el("div", { class: "gal", style: "justify-content:center" }, st.order.map((x, k) => [x, k]).filter(([x, k]) => r.best.includes(x) && C.gal[k] && !C.gal[k].sk)
       .map(([x, k]) => el("div", { class: "thumb", onclick: () => zoomImg(galImg(k, C.gal[k]), pName(x)) }, el("img", { src: galImg(k, C.gal[k]) }), el("span", {}, pName(x)))))));
   if (r.imp === C.me.id && !C.tv && !r.aborted) { r.caught === r.imp && !r.guessOk ? buzz(300) : buzz([80, 60, 80, 60, 80]); }
@@ -2206,8 +2383,23 @@ function resultScreen() {
         el("div", { class: "thumb", style: "width:auto", onclick: () => zoomImg(before) }, el("img", { src: before, style: "width:100%;height:auto" }), el("span", {}, t("before"))),
         el("div", { class: "thumb", style: "width:auto", onclick: () => zoomImg(galImg(sb.k, g)) }, el("img", { src: galImg(sb.k, g), style: "width:100%;height:auto" }), el("span", {}, t("after"))))));
   }
-  // impostor's drawings
-  const ks = st.order.map((x, k) => (x === r.imp ? k : -1)).filter((k) => k >= 0 && C.gal[k] && !C.gal[k].sk);
+  // takeovers
+  for (const tk of r.takes || []) {
+    const g = C.gal[tk.k];
+    kids.push(el("div", { class: "card" }, el("h3", {}, t("tookOver", { name: pName(tk.from) })),
+      g && !g.sk ? el("div", { class: "gal" }, el("div", { class: "thumb", onclick: () => zoomImg(galImg(tk.k, g)) }, el("img", { src: galImg(tk.k, g) }),
+        el("span", {}, t("turnShort", { n: tk.k + 1, name: pName(st.order[tk.k]) })))) : null));
+  }
+  // secret swap: who really drew what
+  if (st.twist === "swap" && !r.aborted) kids.push(el("div", { class: "card" }, el("h3", {}, t("whoDrew")),
+    st.order.map((owner, k) => {
+      const g = C.gal[k];
+      return el("div", { class: "who-row", onclick: () => g && !g.sk && zoomImg(galImg(k, g)) },
+        g && !g.sk ? el("img", { src: galImg(k, g) }) : el("div", { class: "ph" }, "💤"),
+        el("span", {}, t("drawnBy", { owner: pName(owner), artist: pName(A[k]) }) + (A[k] === r.imp ? " 🕵️" : "")));
+    })));
+  // impostor's drawings (whatever slot they were drawn in)
+  const ks = A.map((x, k) => (x === r.imp ? k : -1)).filter((k) => k >= 0 && C.gal[k] && !C.gal[k].sk);
   if (ks.length) kids.push(el("div", { class: "card" }, el("h3", {}, t("impDrawings")),
     el("div", { class: "gal" }, ks.map((k) => el("div", { class: "thumb", onclick: () => zoomImg(galImg(k, C.gal[k]), impName) }, el("img", { src: galImg(k, C.gal[k]) }))))));
   // how everyone voted
