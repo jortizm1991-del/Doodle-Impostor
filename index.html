@@ -153,6 +153,22 @@ body.tv .vgrid{grid-template-columns:repeat(4,1fr)}
 .podium{display:flex;align-items:flex-end;justify-content:center;gap:8px;margin:18px 0 6px}
 .podium>div{flex:1;max-width:120px;line-height:1.2;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;text-align:center;border-radius:14px 14px 0 0;color:#fff;padding:8px 4px;font-weight:800;font-family:"Baloo 2",system-ui,sans-serif}
 .podium .n{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.twist{background:#e9e1ff;border:2px solid #cbb8ff;border-radius:16px;padding:10px 12px;margin:8px 0;text-align:center}
+.secret .role{font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;font-size:24px;color:#ff8fb1;margin-bottom:4px}
+.sablayer{position:absolute;inset:0;pointer-events:none}
+.boardwrap .over.blind{background:#2a2238;color:#fff;pointer-events:none;z-index:2}
+.sabbar{background:#2a2238;color:#fff;border-radius:16px;padding:10px 12px;margin:10px 0}
+.sabbar .colors{margin:8px 0 2px}
+.tbar.sab{background:#4a3f5c}.tbar.sab i{background:#ff5fa2;transition:none}
+.vb{width:100%;border:2px solid var(--line);background:#fff;border-radius:10px;padding:6px 4px;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink);touch-action:manipulation}
+.vb.on.imp{background:var(--red);border-color:var(--red-d);color:#fff}
+.vb.on.sab{background:var(--imp);border-color:var(--imp-d);color:#fff}
+.vb.on.best{background:var(--gold);border-color:#d99a00}
+.vcard .you{text-align:center;color:var(--muted);font-weight:700;font-size:14px;padding:6px}
+.myvotes{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;margin:4px 0;font-size:14px}
+.mv{background:#f3ead9;border-radius:10px;padding:3px 8px;font-weight:600}
+.mv.set.imp{background:#ffd9d0}.mv.set.sab{background:#e4dbff}.mv.set.best{background:#ffeab0}
+.reveal.sabr{background:#2a2238;box-shadow:0 5px 0 #15101e}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:14px;z-index:50;
   font-weight:700;max-width:90vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.2)}
 .banner{background:#fff3c4;border:2px solid #f1d77a;border-radius:14px;padding:8px 12px;margin:8px 0;font-weight:600;font-size:15px}
@@ -191,12 +207,13 @@ const T = {
     howTo: "How to play",
     rules: [
       "Everyone gets the same secret word — except the 🕵️ impostor, who only sees the category.",
-      "Take turns drawing something RELATED to the word (not the word itself) in 30 seconds. Everyone watches each drawing appear live.",
+      "Take turns drawing something RELATED to the word (not the word itself). Everyone watches each drawing appear live.",
       "The impostor watches, figures out the word, and draws something that fits in.",
-      "Talk it over and vote for who you think the impostor is.",
+      "😈 Sabotage (optional): the impostor and a secret saboteur can each sneak onto ONE other player's drawing while it's being made, to either add something OR erase something.",
+      "Then vote: who's the impostor, who's the saboteur, and whose drawing fit the word best ⭐.",
       "If the impostor is caught, they get one last chance to guess the word and steal the win!",
     ],
-    scoring: "Points: +1 for voting for the impostor · +1 for everyone if the crew wins · Impostor +3 for escaping, +2 for a correct last-second guess.",
+    scoring: "Points: +1 for each correct vote for the impostor or saboteur · +1 for everyone on the crew if the impostor is caught · Impostor +3 for escaping, +1 for guessing the word at the end · Saboteur +2 for not getting caught · Best drawing +1.",
     resumeHost: "Resume hosting room {code}", resumeJoin: "Rejoin room {code}", forget: "Forget",
     connecting: "Connecting…", findingRoom: "Looking for room {code}…",
     cantFind: "Can't find that room yet. Check the code, and that the host's screen is open.",
@@ -246,6 +263,26 @@ const T = {
     tvLobby: "Big screen", close: "Close", sound: "Sound",
     relayNote: "Each phone needs internet. Drawings and names pass through a free public relay.",
     nameTaken: "Pick a name", hostFallback: "Trying another relay…",
+    modes: "Game modes", cats: "Categories", twist: "Twist", sabotage: "Sabotage",
+    twists: { none: "None", blind: "🙈 Blind drawing", oneline: "✍️ One line only", speed: "⚡ Speed (15s)", random: "🎲 Random each round" },
+    twistDesc: { blind: "You can't see your own drawing while you draw!", oneline: "One stroke only: once you lift your finger, you're done!", speed: "Only 15 seconds to draw!" },
+    twistNow: "Twist this round: {t}", blindCover: "🙈 Drawing blind!", oneLineTip: "✍️ One stroke only — don't lift your finger!",
+    sabHint: "The impostor and a secret saboteur (4+ players) can each mess with one drawing.",
+    adultNote: "🔞 After Dark words are for adults only.",
+    youSab: "😈 You are the SABOTEUR",
+    sabTip: "You're on the crew and know the word. Secretly mess with ONE drawing while it's being made — and don't get caught!",
+    impSabTip: "You can also secretly sabotage ONE drawing with 🎭 Secret action.",
+    secretAction: "🎭 Secret action", noAction: "No secret action for you this round 🙂",
+    sabUsed: "You already used your sabotage this round.",
+    sabPick: "Sabotage {name}'s drawing? Pick ONE:", sabAdd: "✏️ Add something", sabErase: "🧽 Erase something",
+    sabGo: "😈 Sabotaging! Ink left:", sabStop: "Stop", sabNo: "Can't sabotage right now (someone got there first, or time's almost up).",
+    sabDoneMsg: "😈 Done! Act natural…", cancel: "Cancel",
+    voteLegend: "Tap a player for each question.", vImp: "🕵️ Impostor", vSab: "😈 Saboteur", vBest: "⭐ Best drawing",
+    myVotes: "Your votes:", voteTime: "Time to vote! 🗳️",
+    sabWas: "😈 The saboteur was {name}", sabCaught: "and got caught! 🎯", sabEscaped: "and got away with it!", sabLazy: "but never sabotaged anything.",
+    sabbedList: "Sabotaged drawings", sabBy: "{name}'s drawing — sabotaged by the {role}", roleImp: "impostor", roleSab: "saboteur",
+    before: "Before", after: "After", bestWas: "⭐ Best drawing: {names}",
+    votesHead: "How everyone voted",
     customCat: "Custom", resumeOld: "Room {code} has ended.",
   },
   es: {
@@ -257,12 +294,13 @@ const T = {
     howTo: "Cómo se juega",
     rules: [
       "Todos reciben la misma palabra secreta, menos el 🕵️ impostor, que solo ve la categoría.",
-      "Por turnos, dibujen algo RELACIONADO con la palabra (no la palabra misma) en 30 segundos. Todos ven cada dibujo en vivo.",
+      "Por turnos, dibujen algo RELACIONADO con la palabra (no la palabra misma). Todos ven cada dibujo en vivo.",
       "El impostor observa, intenta adivinar la palabra y dibuja algo que encaje.",
-      "Hablen y voten por quien creen que es el impostor.",
+      "😈 Sabotaje (opcional): el impostor y un saboteador secreto pueden meterse en UN dibujo de otro jugador mientras lo hace, para agregar algo O borrar algo.",
+      "Luego voten: quién es el impostor, quién es el saboteador y qué dibujo encajó mejor con la palabra ⭐.",
       "Si atrapan al impostor, tiene una última oportunidad: ¡si adivina la palabra, se roba la victoria!",
     ],
-    scoring: "Puntos: +1 por votar al impostor · +1 para todos si gana el equipo · Impostor +3 si escapa, +2 si adivina al final.",
+    scoring: "Puntos: +1 por cada voto correcto al impostor o al saboteador · +1 para todo el equipo si atrapan al impostor · Impostor +3 si escapa, +1 si adivina la palabra al final · Saboteador +2 si no lo atrapan · Mejor dibujo +1.",
     resumeHost: "Seguir siendo anfitrión de {code}", resumeJoin: "Volver a la sala {code}", forget: "Olvidar",
     connecting: "Conectando…", findingRoom: "Buscando la sala {code}…",
     cantFind: "Aún no encontramos esa sala. Revisa el código y que la pantalla del anfitrión esté abierta.",
@@ -312,6 +350,26 @@ const T = {
     tvLobby: "Pantalla grande", close: "Cerrar", sound: "Sonido",
     relayNote: "Cada teléfono necesita internet. Los dibujos y nombres pasan por un servidor público gratuito.",
     nameTaken: "Escribe un nombre", hostFallback: "Probando otro servidor…",
+    modes: "Modos de juego", cats: "Categorías", twist: "Giro", sabotage: "Sabotaje",
+    twists: { none: "Ninguno", blind: "🙈 Dibujo a ciegas", oneline: "✍️ Una sola línea", speed: "⚡ Rápido (15s)", random: "🎲 Al azar cada ronda" },
+    twistDesc: { blind: "¡No puedes ver tu propio dibujo mientras dibujas!", oneline: "Un solo trazo: cuando levantes el dedo, ¡terminaste!", speed: "¡Solo 15 segundos para dibujar!" },
+    twistNow: "Giro de esta ronda: {t}", blindCover: "🙈 ¡Dibujando a ciegas!", oneLineTip: "✍️ Un solo trazo: ¡no levantes el dedo!",
+    sabHint: "El impostor y un saboteador secreto (4+ jugadores) pueden arruinar un dibujo cada uno.",
+    adultNote: "🔞 Las palabras de Después de medianoche son solo para adultos.",
+    youSab: "😈 Eres el SABOTEADOR",
+    sabTip: "Eres del equipo y sabes la palabra. Arruina en secreto UN dibujo mientras lo hacen, ¡y que no te atrapen!",
+    impSabTip: "También puedes sabotear en secreto UN dibujo con 🎭 Acción secreta.",
+    secretAction: "🎭 Acción secreta", noAction: "No tienes acción secreta esta ronda 🙂",
+    sabUsed: "Ya usaste tu sabotaje esta ronda.",
+    sabPick: "¿Sabotear el dibujo de {name}? Elige UNO:", sabAdd: "✏️ Agregar algo", sabErase: "🧽 Borrar algo",
+    sabGo: "😈 ¡Saboteando! Tinta:", sabStop: "Parar", sabNo: "No se puede sabotear ahora (alguien llegó primero o ya casi se acaba el tiempo).",
+    sabDoneMsg: "😈 ¡Listo! Disimula…", cancel: "Cancelar",
+    voteLegend: "Toca un jugador para cada pregunta.", vImp: "🕵️ Impostor", vSab: "😈 Saboteador", vBest: "⭐ Mejor dibujo",
+    myVotes: "Tus votos:", voteTime: "¡A votar! 🗳️",
+    sabWas: "😈 El saboteador era {name}", sabCaught: "¡y lo atraparon! 🎯", sabEscaped: "¡y se salió con la suya!", sabLazy: "pero nunca saboteó nada.",
+    sabbedList: "Dibujos saboteados", sabBy: "Dibujo de {name}: saboteado por el {role}", roleImp: "impostor", roleSab: "saboteador",
+    before: "Antes", after: "Después", bestWas: "⭐ Mejor dibujo: {names}",
+    votesHead: "Cómo votó cada quien",
     customCat: "Propias", resumeOld: "La sala {code} ya terminó.",
   },
 };
@@ -389,7 +447,41 @@ const CATS = [
     ["tombstone","lápida"],["black cat","gato negro"],["candy","dulces"],["crystal ball","bola de cristal"],["knight","caballero"],
     ["princess","princesa"],["ninja","ninja"]]},
 ];
-const catName = (id, lang = LANG) => id === "custom" ? T[lang].customCat : (CATS.find((c) => c.id === id)?.[lang] || id);
+// Game modes: themed word sets, split into groups so the impostor still gets a hint.
+const MODES = [
+  { id: "easy", e: "🟢", en: "Easy (simple words)", es: "Fácil (palabras sencillas)", g: [
+    { en: "Animals", es: "Animales", w: [["cat","gato"],["dog","perro"],["fish","pez"],["bird","pájaro"],["duck","pato"],["cow","vaca"],["pig","cerdo"],["bee","abeja"],["snake","serpiente"],["frog","rana"]] },
+    { en: "Food", es: "Comida", w: [["apple","manzana"],["banana","plátano"],["pizza","pizza"],["cake","pastel"],["egg","huevo"],["ice cream","helado"],["cookie","galleta"],["carrot","zanahoria"],["cheese","queso"],["bread","pan"]] },
+    { en: "Things", es: "Cosas", w: [["ball","pelota"],["hat","sombrero"],["shoe","zapato"],["cup","taza"],["key","llave"],["book","libro"],["chair","silla"],["clock","reloj"],["umbrella","paraguas"],["glasses","lentes"]] },
+    { en: "Outside", es: "Afuera", w: [["sun","sol"],["moon","luna"],["star","estrella"],["tree","árbol"],["flower","flor"],["cloud","nube"],["rain","lluvia"],["house","casa"],["car","carro"],["boat","barco"]] },
+  ]},
+  { id: "kids", e: "🧸", en: "Kids", es: "Niños", g: [
+    { en: "Toys & play", es: "Juguetes y juegos", w: [["teddy bear","osito de peluche"],["balloon","globo"],["kite","papalote"],["building blocks","bloques"],["slide","resbaladilla"],["swing","columpio"],["trampoline","trampolín"],["bouncy castle","castillo inflable"],["crayons","crayones"],["yo-yo","yoyo"]] },
+    { en: "Pretend & magic", es: "Fantasía y magia", w: [["unicorn","unicornio"],["dinosaur","dinosaurio"],["magic wand","varita mágica"],["tooth fairy","hada de los dientes"],["pirate ship","barco pirata"],["treasure map","mapa del tesoro"],["monster under the bed","monstruo debajo de la cama"],["superhero cape","capa de superhéroe"],["castle","castillo"],["dragon","dragón"]] },
+    { en: "My day", es: "Mi día", w: [["bubble bath","baño de burbujas"],["bedtime story","cuento antes de dormir"],["school bus","autobús escolar"],["lunch box","lonchera"],["backpack","mochila"],["birthday party","fiesta de cumpleaños"],["piggy bank","alcancía"],["sandbox","arenero"],["ice cream truck","camión de helados"],["pajamas","pijama"]] },
+    { en: "Animal friends", es: "Amigos animales", w: [["puppy","perrito"],["kitten","gatito"],["bunny","conejito"],["penguin","pingüino"],["giraffe","jirafa"],["monkey","mono"],["elephant","elefante"],["butterfly","mariposa"],["ladybug","catarina"],["jellyfish","medusa"]] },
+  ]},
+  { id: "hard", e: "🔴", en: "Hard (tricky ideas)", es: "Difícil (ideas complicadas)", g: [
+    { en: "Feelings & ideas", es: "Sentimientos e ideas", w: [["nostalgia","nostalgia"],["jealousy","celos"],["freedom","libertad"],["friendship","amistad"],["sarcasm","sarcasmo"],["karma","karma"],["procrastination","procrastinación"],["peer pressure","presión de grupo"],["homesickness","extrañar el hogar"],["déjà vu","déjà vu"]] },
+    { en: "Science", es: "Ciencia", w: [["gravity","gravedad"],["evolution","evolución"],["photosynthesis","fotosíntesis"],["black hole","agujero negro"],["electricity","electricidad"],["eclipse","eclipse"],["echo","eco"],["magnetism","magnetismo"],["artificial intelligence","inteligencia artificial"],["time travel","viaje en el tiempo"]] },
+    { en: "Society", es: "Sociedad", w: [["democracy","democracia"],["inflation","inflación"],["stock market","bolsa de valores"],["social media","redes sociales"],["global warming","calentamiento global"],["recycling","reciclaje"],["conspiracy theory","teoría de conspiración"],["revolution","revolución"],["identity theft","robo de identidad"],["gossip","chisme"]] },
+    { en: "Life moments", es: "Momentos de la vida", w: [["midlife crisis","crisis de los 40"],["jet lag","jet lag"],["insomnia","insomnio"],["traffic jam","embotellamiento"],["job interview","entrevista de trabajo"],["multitasking","multitarea"],["plot twist","giro inesperado"],["vertigo","vértigo"],["hypnosis","hipnosis"],["first day of school","primer día de clases"]] },
+  ]},
+  { id: "afterdark", e: "🔞", en: "After Dark (18+)", es: "Después de medianoche (18+)", adult: true, g: [
+    { en: "Night out", es: "Noche de fiesta", w: [["hangover","resaca"],["tequila shot","shot de tequila"],["last call","última ronda"],["bouncer","cadenero"],["beer pong","beer pong"],["karaoke night","noche de karaoke"],["drunk text","mensaje borracho"],["walk of shame","camino de la vergüenza"],["after party","after"],["bartender","bartender"]] },
+    { en: "Dating", es: "Citas", w: [["first date","primera cita"],["dating app","app de citas"],["speed dating","citas rápidas"],["breakup text","mensaje de ruptura"],["crush","amor platónico"],["booty call","llamada de madrugada"],["the ex","el ex"],["cheating","infidelidad"],["flirting","coqueteo"],["French kiss","beso francés"]] },
+    { en: "Party games", es: "Juegos de fiesta", w: [["spin the bottle","la botella"],["truth or dare","verdad o reto"],["strip poker","póker de prendas"],["body shot","shot en el cuerpo"],["lap dance","baile privado"],["pole dancing","baile en tubo"],["bachelor party","despedida de soltero"],["Vegas wedding","boda en Las Vegas"],["hot tub","jacuzzi"],["skinny dipping","nadar desnudos"]] },
+    { en: "Bedroom & beyond", es: "La recámara y más", w: [["lingerie","lencería"],["handcuffs","esposas"],["whipped cream","crema batida"],["massage","masaje"],["honeymoon","luna de miel"],["wedding night","noche de bodas"],["morning after","la mañana siguiente"],["hickey","chupetón"],["nude beach","playa nudista"],["love handles","llantitas"]] },
+  ]},
+];
+// Every word set in one place: { id, e, en, es, kind, words:[{en, es, hen, hes}] }  (hen/hes = hint)
+const PACKS = {};
+for (const c of CATS) PACKS[c.id] = { id: c.id, e: c.e, en: c.en, es: c.es, kind: "cat", words: c.w.map(([en, es]) => ({ en, es, hen: c.en, hes: c.es })) };
+for (const m of MODES) PACKS[m.id] = { id: m.id, e: m.e, en: m.en, es: m.es, kind: "mode", adult: !!m.adult,
+  words: m.g.flatMap((g) => g.w.map(([en, es]) => ({ en, es, hen: g.en, hes: g.es }))) };
+const catName = (id, lang = LANG) => id === "custom" ? T[lang].customCat : id === "mix" ? T[lang].mix : (PACKS[id]?.[lang] || id);
+const packLabel = (id) => id === "mix" ? "🎲 " + t("mix") : id === "custom" ? "✏️ " + t("custom") : PACKS[id] ? PACKS[id].e + " " + PACKS[id][LANG] : id;
+const TWISTS = ["none", "blind", "oneline", "speed", "random"];
 const cap = (s) => s ? s.charAt(0).toLocaleUpperCase() + s.slice(1) : s;
 
 // ---------------------------------------------------------------------
@@ -710,14 +802,15 @@ const W = 800, OP_B = 1000, OP_F = 2000, OP_U = 3000, OP_K = 3001, OP_E = 3002;
 const RGB = PAL.map((h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)));
 
 class Board {
-  constructor(canvas) {
+  constructor(canvas, clear) {
+    this.clear = !!clear; // transparent layer (used for sabotage on top of a drawing)
     this.cv = canvas || document.createElement("canvas");
     this.cv.width = this.cv.height = W;
     this.g = this.cv.getContext("2d", { willReadFrequently: true });
     this.reset();
   }
   reset() { this.tok = []; this.i = 0; this.ops = []; this.cur = null; this.white(); }
-  white() { this.g.fillStyle = "#fff"; this.g.fillRect(0, 0, W, W); }
+  white() { if (this.clear) this.g.clearRect(0, 0, W, W); else { this.g.fillStyle = "#fff"; this.g.fillRect(0, 0, W, W); } }
   load(tok) { this.reset(); this.push(tok || []); }
   push(tok) { for (const v of tok) this.tok.push(v); this.run(); }
   run() {
@@ -797,8 +890,10 @@ class Board {
     g.putImageData(img, 0, 0);
   }
   // ---- input (only on the drawer's phone) ----
-  enableInput(onTok) {
+  //  opts.ink: max line length (sabotage), opts.oneStroke: stop after the first stroke
+  enableInput(onTok, opts = {}) {
     this.tool = "pen"; this.color = 0; this.size = 1; this.enabled = true; this.onTok = onTok;
+    this.ink = opts.ink || Infinity; this.ink0 = this.ink;
     let active = null, lx = 0, ly = 0;
     const pos = (e) => {
       const r = this.cv.getBoundingClientRect();
@@ -821,12 +916,18 @@ class Board {
       const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
       const add = [];
       for (const ce of evs.length ? evs : [e]) {
-        const [x, y] = pos(ce);
-        if (Math.hypot(x - lx, y - ly) >= 2.5) { add.push(x, y); lx = x; ly = y; }
+        const [x, y] = pos(ce), d = Math.hypot(x - lx, y - ly);
+        if (d >= 2.5) { add.push(x, y); lx = x; ly = y; this.ink -= d; if (this.ink <= 0) break; }
       }
       if (add.length) emit(add);
+      opts.onMove?.(Math.max(0, this.ink / this.ink0));
+      if (this.ink <= 0) { active = null; emit([OP_E]); this.enabled = false; opts.onInk?.(); }
     });
-    const up = (e) => { if (e.pointerId !== active) return; active = null; if (this.enabled) emit([OP_E]); };
+    const up = (e) => {
+      if (e.pointerId !== active) return;
+      active = null;
+      if (this.enabled) { emit([OP_E]); if (opts.oneStroke) { this.enabled = false; opts.onStroke?.(); } }
+    };
     this.cv.addEventListener("pointerup", up);
     this.cv.addEventListener("pointercancel", up);
     this.cv.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -836,11 +937,12 @@ class Board {
 }
 // thumbnails (cached)
 const thumbCache = new Map();
-function drawingImg(tok, key) {
+function drawingImg(tok, key, sab) {
   if (key && thumbCache.has(key)) return thumbCache.get(key);
   const b = new Board(); b.load(tok);
   const c = document.createElement("canvas"); c.width = c.height = 400;
   c.getContext("2d").drawImage(b.cv, 0, 0, 400, 400);
+  if (sab && sab.length) { const o = new Board(null, true); o.load(sab); c.getContext("2d").drawImage(o.cv, 0, 0, 400, 400); }
   const url = c.toDataURL("image/png");
   if (key) thumbCache.set(key, url);
   return url;
@@ -856,12 +958,12 @@ function hostCreate(name) {
     code: makeCode(0), brokerIdx: 0, hid: rid(6), me: { id: meId, name },
     st: {
       hid: "", v: 0, phase: "lobby", lang: LANG, hostId: meId,
-      set: { cat: "mix", time: 30, laps: 0, rounds: 5, hint: true },
+      set: { cat: "mix", time: 30, laps: 0, rounds: 5, hint: true, twist: "none", sab: true },
       players: [{ id: meId, name, score: 0, col: 0, on: true, ready: false, wait: false }],
       round: 0, rid: "", parts: [], order: [], k: 0, left: 0, total: 0, done: 0,
-      cands: [], voted: [], vr: 1, guess: null, res: null, customN: 0,
+      cands: [], voted: [], vr: 1, guess: null, res: null, customN: 0, twist: "none", sabRole: false, sabOn: false,
     },
-    sec: null, draw: {}, live: null, seen: {}, impCount: {}, used: {}, custom: [], deadline: 0, lastImp: "",
+    sec: null, draw: {}, live: null, sabs: {}, seen: {}, impCount: {}, sabCount: {}, used: {}, custom: [], deadline: 0, lastImp: "",
   };
   H.st.hid = H.hid;
   return H;
@@ -887,14 +989,14 @@ function hPriv(id, msg) {
 const inRound = () => ["reveal", "draw", "vote", "guess"].includes(H.st.phase);
 function hSendRole(id) {
   if (!H.sec || !inRound() || !H.st.parts.includes(id)) return;
-  const imp = id === H.sec.imp;
-  hPriv(id, { t: "role", rid: H.st.rid, role: imp ? "imp" : "crew",
-    word: imp ? null : H.sec.word, cat: H.sec.w.c === "custom" || (imp && !H.st.set.hint) ? null : H.sec.catName });
+  const imp = id === H.sec.imp, sab = id === H.sec.sab;
+  hPriv(id, { t: "role", rid: H.st.rid, role: imp ? "imp" : sab ? "sab" : "crew", canSab: H.sec.sabbers.includes(id),
+    word: imp ? null : H.sec.word, cat: !H.sec.hint || (imp && !H.st.set.hint) ? null : H.sec.hint });
 }
-function hSendDrawing(k, to) {
+function hSendDrawing(k) {
   const d = H.draw[k];
   if (!d) return;
-  const m = { rid: H.st.rid, k, pid: d.pid, tok: d.tok, sk: !!d.sk };
+  const m = { rid: H.st.rid, k, pid: d.pid, tok: d.tok, sab: d.sab || null, sk: !!d.sk };
   C.conn?.pub(TOP(H.code) + "/g", m);
   onGal(m);
 }
@@ -926,7 +1028,20 @@ function hMsg(m) {
     case "ready":
       if (p && st.phase === "reveal" && !p.ready) { p.ready = true; hPublish(); hCheckReady(); }
       break;
-    case "vote": hVote(m.id, m.to); break;
+    case "vote": hVote(m.id, m.to, m.kind); break;
+    case "sab": {
+      // someone asks to sabotage the current drawing — only one sabotage per drawing, one per person per round
+      const S = H.sec;
+      if (st.phase === "draw" && S && m.rid === st.rid && m.k === st.k && S.sabbers.includes(m.id) && !S.sabUsed[m.id] &&
+          !H.sabs[st.k] && st.order[st.k] !== m.id && H.deadline - now() > 4000 && (m.mode === "add" || m.mode === "erase")) {
+        const key = rid(4);
+        S.sabUsed[m.id] = true;
+        H.sabs[st.k] = { by: m.id, key, tok: [], mode: m.mode };
+        hPriv(m.id, { t: "sabok", rid: st.rid, k: st.k, key, mode: m.mode });
+        hSave();
+      } else hPriv(m.id, { t: "sabno", rid: st.rid, used: !!S?.sabUsed?.[m.id] });
+      break;
+    }
     case "guess": hGuess(m.id, m.i); break;
     case "need":
       for (const k of (m.ks || []).slice(0, 30)) {
@@ -941,9 +1056,25 @@ function hMsg(m) {
     case "leave": hRemove(m.id); break;
   }
 }
+// merge a streamed piece of a drawing into a token list
+function mergeTok(L, m) {
+  if (m.full || m.fin) return m.tok.length >= L.length || m.fin ? m.tok.slice() : L;
+  if (m.from === L.length) { for (const v of m.tok) L.push(v); }
+  else if (m.from < L.length && m.from + m.tok.length > L.length) { for (const v of m.tok.slice(L.length - m.from)) L.push(v); }
+  return L;
+}
 function hDraw(m) {
   const st = H.st;
-  if (!m || m.rid !== st.rid || m.by !== st.order[m.k]) return;
+  if (!m || m.rid !== st.rid) return;
+  if (m.sab) {
+    const S = H.sabs[m.k];
+    if (!S || S.key !== m.sab) return;
+    S.tok = mergeTok(S.tok, m);
+    if (H.draw[m.k] && m.fin) { H.draw[m.k].sab = S.tok; hSendDrawing(m.k); }
+    hSave();
+    return;
+  }
+  if (m.by !== st.order[m.k]) return;
   if (m.k === st.k && st.phase === "draw") {
     if (!H.live || H.live.k !== m.k) H.live = { k: m.k, tok: [] };
     const L = H.live.tok;
@@ -962,23 +1093,28 @@ function pickWord() {
   let pool;
   if (cat === "custom" && H.custom.length) pool = H.custom.map((_, i) => ({ c: "custom", i }));
   else {
-    const cs = cat === "mix" || cat === "custom" ? CATS : CATS.filter((c) => c.id === cat);
-    pool = cs.flatMap((c) => c.w.map((_, i) => ({ c: c.id, i })));
+    const ids = PACKS[cat] ? [cat] : CATS.map((c) => c.id);
+    pool = ids.flatMap((id) => PACKS[id].words.map((_, i) => ({ c: id, i })));
   }
   let avail = pool.filter((x) => !H.used[x.c + ":" + x.i]);
   if (!avail.length) { for (const x of pool) delete H.used[x.c + ":" + x.i]; avail = pool; }
   const w = pick(avail); H.used[w.c + ":" + w.i] = 1;
   return w;
 }
-const wordText = (w) => w.c === "custom" ? H.custom[w.i] : CATS.find((c) => c.id === w.c).w[w.i][H.st.lang === "es" ? 1 : 0];
+const wordText = (w) => w.c === "custom" ? H.custom[w.i] : PACKS[w.c].words[w.i][H.st.lang];
+const hintText = (w) => w.c === "custom" ? null : PACKS[w.c].words[w.i][H.st.lang === "es" ? "hes" : "hen"];
 function guessChoices(w) {
-  const word = wordText(w);
-  let others = w.c === "custom"
-    ? H.custom.filter((x, i) => i !== w.i)
-    : CATS.find((c) => c.id === w.c).w.filter((_, i) => i !== w.i).map((p) => p[H.st.lang === "es" ? 1 : 0]);
-  others = shuffle([...new Set(others.filter((x) => x.toLowerCase() !== word.toLowerCase()))]).slice(0, 7);
+  const word = wordText(w), L = H.st.lang;
+  let others;
+  if (w.c === "custom") others = shuffle(H.custom.filter((x, i) => i !== w.i));
+  else {
+    // words from the same group first, so the choices are all plausible
+    const ws = PACKS[w.c].words, me = ws[w.i];
+    others = [...shuffle(ws.filter((x, i) => i !== w.i && x.hen === me.hen)), ...shuffle(ws.filter((x) => x.hen !== me.hen))].map((x) => x[L]);
+  }
+  others = [...new Set(others.filter((x) => x.toLowerCase() !== word.toLowerCase()))].slice(0, 7);
   if (others.length < 7) {
-    const extra = shuffle(CATS.flatMap((c) => c.w.map((p) => p[H.st.lang === "es" ? 1 : 0])))
+    const extra = shuffle(CATS.flatMap((c) => PACKS[c.id].words.map((x) => x[L])))
       .filter((x) => x !== word && !others.includes(x));
     others.push(...extra.slice(0, 7 - others.length));
   }
@@ -1004,9 +1140,21 @@ function hNewRound() {
     if (order.length && o[0] === order[order.length - 1]) [o[0], o[1]] = [o[1], o[0]];
     order.push(...o);
   }
-  H.sec = { w, word: cap(wordText(w)), catName: w.c === "custom" ? T[st.lang].customCat : catName(w.c, st.lang), imp, votes: {}, choices: null };
-  H.draw = {}; H.live = null; H.deadline = 0;
-  Object.assign(st, { phase: "reveal", round: st.round + 1, rid: rid(4), parts, order, k: 0, done: 0, cands: [], voted: [], vr: 1, guess: null, res: null });
+  // saboteur (only with 4+ players, otherwise any sabotage would give the impostor away)
+  let sab = null;
+  const sabOn = !!st.set.sab && parts.length >= 4;
+  if (sabOn) {
+    const others = parts.filter((id) => id !== imp);
+    const minS = Math.min(...others.map((id) => H.sabCount[id] || 0));
+    sab = pick(others.filter((id) => (H.sabCount[id] || 0) === minS));
+    H.sabCount[sab] = (H.sabCount[sab] || 0) + 1;
+  }
+  const twist = st.set.twist === "random" ? pick(["none", "blind", "oneline", "speed"]) : (st.set.twist || "none");
+  H.sec = { w, word: cap(wordText(w)), hint: hintText(w), imp, sab, sabbers: sabOn ? [imp, sab] : [], sabUsed: {},
+    votes: {}, sabVotes: {}, bestVotes: {}, choices: null };
+  H.draw = {}; H.live = null; H.sabs = {}; H.deadline = 0;
+  Object.assign(st, { phase: "reveal", round: st.round + 1, rid: rid(4), parts, order, k: 0, done: 0, cands: [], voted: [], vr: 1,
+    guess: null, res: null, twist, sabRole: !!sab, sabOn });
   for (const id of parts) hSendRole(id);
   hPublish();
 }
@@ -1031,34 +1179,41 @@ function hNextTurn() {
   }
   if (st.k >= st.order.length) return hStartVote(st.parts.slice());
   H.live = { k: st.k, tok: [] };
-  H.deadline = now() + st.set.time * 1000; st.total = st.set.time * 1000;
+  const secs = st.twist === "speed" ? 15 : st.set.time;
+  H.deadline = now() + secs * 1000; st.total = secs * 1000;
   hPublish();
 }
 function hEndTurn() {
   const st = H.st;
   if (st.phase !== "draw") return;
-  H.draw[st.k] = { pid: st.order[st.k], tok: H.live && H.live.k === st.k ? H.live.tok : [], sk: false };
+  H.draw[st.k] = { pid: st.order[st.k], tok: H.live && H.live.k === st.k ? H.live.tok : [], sab: H.sabs[st.k]?.tok || null, sk: false };
   st.done = st.k + 1;
   hSendDrawing(st.k);
   hNextTurn();
 }
+// a player is done once they've answered every question on the ballot
+const doneVoting = (id) => !!H.sec.votes[id] && (H.st.vr === 2 || ((!H.sec.sab || !!H.sec.sabVotes[id]) && !!H.sec.bestVotes[id]));
 function hStartVote(cands) {
   const st = H.st;
-  st.phase = "vote"; st.cands = cands; st.voted = []; H.sec.votes = {}; H.deadline = 0; st.total = 0;
+  st.phase = "vote"; st.cands = cands; H.sec.votes = {}; H.deadline = 0; st.total = 0;
+  st.voted = st.parts.filter(doneVoting);
   hPublish();
 }
-function hVote(id, to) {
-  const st = H.st;
-  if (st.phase !== "vote" || !st.parts.includes(id) || !st.cands.includes(to) || to === id) return;
-  H.sec.votes[id] = to;
-  st.voted = Object.keys(H.sec.votes);
+function hVote(id, to, kind = "imp") {
+  const st = H.st, S = H.sec;
+  if (st.phase !== "vote" || !st.parts.includes(id) || !st.parts.includes(to) || to === id) return;
+  if (kind === "imp") { if (!st.cands.includes(to)) return; S.votes[id] = to; }
+  else if (kind === "sab") { if (!S.sab || st.vr !== 1) return; S.sabVotes[id] = to; }
+  else if (kind === "best") { if (st.vr !== 1) return; S.bestVotes[id] = to; }
+  else return;
+  st.voted = st.parts.filter(doneVoting);
   hPublish();
   hCheckVotes();
 }
 function hCheckVotes() {
   const st = H.st;
   if (st.phase !== "vote") return;
-  const allIn = () => { const need = H.st.parts.filter((id) => hOnline(id)); return need.length > 0 && need.every((id) => H.sec.votes[id]); };
+  const allIn = () => { const need = H.st.parts.filter((id) => hOnline(id)); return need.length > 0 && need.every(doneVoting); };
   if (allIn()) {
     clearTimeout(H.voteT);
     H.voteT = setTimeout(() => { if (H.st.phase === "vote" && allIn()) hTally(); }, 1200);
@@ -1096,17 +1251,35 @@ function hGuess(id, i) {
 function hResult(r) {
   const st = H.st, imp = H.sec.imp;
   const gains = {};
+  let sabInfo = null, best = [];
   if (!r.aborted) {
     const add = (id, n) => { gains[id] = (gains[id] || 0) + n; };
     for (const [voter, to] of Object.entries(H.sec.votes)) if (to === imp) add(voter, 1);
     if (r.caught === imp && !r.guessOk) for (const id of st.parts) { if (id !== imp) add(id, 1); }
-    else if (r.caught === imp && r.guessOk) add(imp, 2);
+    else if (r.caught === imp && r.guessOk) add(imp, 1);
     else add(imp, 3);
+    // saboteur: +1 for each correct vote, +2 to the saboteur if they sabotaged and weren't voted out
+    const tally = (votes) => {
+      const c = {}; for (const to of Object.values(votes)) c[to] = (c[to] || 0) + 1;
+      const max = Math.max(0, ...Object.values(c));
+      return { max, tops: Object.keys(c).filter((id) => c[id] === max) };
+    };
+    if (H.sec.sab) {
+      const sid = H.sec.sab, tv = tally(H.sec.sabVotes);
+      const caught = tv.max > 0 && tv.tops.length === 1 && tv.tops[0] === sid, used = !!H.sec.sabUsed[sid];
+      for (const [voter, to] of Object.entries(H.sec.sabVotes)) if (to === sid) add(voter, 1);
+      if (used && !caught) add(sid, 2);
+      sabInfo = { id: sid, caught, used };
+    }
+    const tb = tally(H.sec.bestVotes);
+    if (tb.max > 0) { best = tb.tops; for (const id of best) add(id, 1); }
     for (const [id, n] of Object.entries(gains)) { const p = hP(id); if (p) p.score += n; }
   }
+  const sabs = Object.entries(H.sabs || {}).map(([k, v]) => ({ k: +k, by: v.by, role: v.by === imp ? "imp" : "sab", mode: v.mode }));
   st.phase = "result"; H.deadline = 0; st.total = 0;
-  st.res = { imp, word: H.sec.word, cat: H.sec.catName, caught: r.caught ?? null, tie: !!r.tie, guessed: !!r.guessed,
-    guessOk: !!r.guessOk, pick: r.pick ?? null, choices: H.sec.choices, votes: H.sec.votes, gains, aborted: r.aborted || null };
+  st.res = { imp, word: H.sec.word, caught: r.caught ?? null, tie: !!r.tie, guessed: !!r.guessed,
+    guessOk: !!r.guessOk, pick: r.pick ?? null, choices: H.sec.choices, votes: H.sec.votes, gains, aborted: r.aborted || null,
+    sab: sabInfo, sabVotes: H.sec.sabVotes, best, bestVotes: H.sec.bestVotes, sabs: r.aborted ? [] : sabs };
   hPublish();
 }
 function hNext() {
@@ -1119,7 +1292,7 @@ function hPlayAgain() {
   const st = H.st;
   for (const p of st.players) { p.score = 0; p.wait = false; p.ready = false; }
   Object.assign(st, { phase: "lobby", round: 0, rid: "", parts: [], order: [], k: 0, done: 0, cands: [], voted: [], guess: null, res: null });
-  H.impCount = {}; H.deadline = 0;
+  H.impCount = {}; H.sabCount = {}; H.deadline = 0;
   hPublish();
 }
 function hRemove(id) {
@@ -1132,6 +1305,10 @@ function hRemove(id) {
     if (id === H.sec.imp) return hResult({ aborted: "imp" });
     st.parts = st.parts.filter((x) => x !== id);
     if (st.parts.length < 3) return hResult({ aborted: "few" });
+    const S = H.sec;
+    if (S.sab === id) { S.sab = null; st.sabRole = false; }
+    S.sabbers = S.sabbers.filter((x) => x !== id);
+    for (const V of [S.sabVotes, S.bestVotes]) { delete V[id]; for (const [v, to] of Object.entries(V)) if (to === id) delete V[v]; }
     if (st.phase === "draw") {
       const wasCurrent = st.order[st.k] === id;
       st.order = st.order.filter((x, i) => i <= st.k || x !== id);
@@ -1143,7 +1320,7 @@ function hRemove(id) {
       delete H.sec.votes[id];
       for (const [v, to] of Object.entries(H.sec.votes)) if (to === id) delete H.sec.votes[v];
       st.cands = st.cands.filter((x) => x !== id);
-      st.voted = Object.keys(H.sec.votes);
+      st.voted = st.parts.filter(doneVoting);
       if (st.cands.length < 2) { hPublish(); return hTally(); }
       hCheckVotes();
     }
@@ -1253,15 +1430,17 @@ function onState(st) {
   const prev = C.st;
   C.st = st; C.stAt = now();
   if (st.lang !== LANG) LANG = st.lang;
-  if (st.rid !== C.galRid) { C.gal = {}; C.galRid = st.rid; C.live = null; }
+  if (st.rid !== C.galRid) { C.gal = {}; C.galRid = st.rid; C.live = null; C.liveSab = null; }
   if (!C.isHost && !C.tv && !st.players.some((p) => p.id === C.me.id)) {
     if (now() - C.joinAt > 1500) hello();
   }
   // turn changed while I was drawing → wrap it up
   if (C.my && !C.my.fin && (st.rid !== C.my.rid || st.k !== C.my.k || st.phase !== "draw")) finishMyTurn();
+  if (C.mySab && !C.mySab.fin && (st.rid !== C.mySab.rid || st.k !== C.mySab.k || st.phase !== "draw")) finishSab();
   // copy the finished live drawing into the gallery straight away
   if (prev && prev.rid === st.rid && C.live && C.live.k < st.done && !C.gal[C.live.k]) {
-    C.gal[C.live.k] = { pid: st.order[C.live.k], tok: C.live.tok.slice(), prov: true };
+    const sb = C.liveSab && C.liveSab.k === C.live.k ? C.liveSab.tok.slice() : null;
+    C.gal[C.live.k] = { pid: st.order[C.live.k], tok: C.live.tok.slice(), sab: sb, prov: true };
   }
   if (prev && prev.phase !== st.phase) {
     if (st.phase === "reveal") { beep(520, .15); beep(780, .2); buzz(80); }
@@ -1283,12 +1462,27 @@ function onPriv(m) {
     pubDraw({ rid: my.rid, k: my.k, full: true, tok });
     my.sent = tok.length; my.snapLen = tok.length; my.lastSnap = now();
   }
+  else if (m.t === "sabok") startSab(m);
+  else if (m.t === "sabno") { toast(m.used ? t("sabUsed") : t("sabNo")); if (m.used) C.sabUsedRid = m.rid; }
   else if (m.t === "kick") { leaveRoom(); toast(t("removed")); }
   else if (m.t === "full") { leaveRoom(); toast(t("full")); }
 }
 function onDraw(m) {
   const st = C.st;
   if (!st || m.rid !== st.rid) return;
+  if (m.sab) {
+    // someone's sabotage layer (we don't know whose — that's the point)
+    if (C.mySab && C.mySab.key === m.sab) return;
+    if (C.liveSab && m.k < C.liveSab.k) return;
+    if (!C.liveSab || C.liveSab.k !== m.k) C.liveSab = { k: m.k, tok: [], board: null };
+    const S = C.liveSab, before = S.tok.length;
+    const wasFull = m.full || m.fin;
+    S.tok = mergeTok(S.tok, m);
+    const ob = S.board;
+    if (ob && ob.k === m.k) { if (wasFull) ob.load(S.tok); else if (S.tok.length > before) ob.push(S.tok.slice(before)); }
+    if (m.fin && C.gal[m.k]) { C.gal[m.k].sab = S.tok.slice(); C.galDirty = true; }
+    return;
+  }
   if (C.live && m.k < C.live.k) return;
   if (!C.live || C.live.k !== m.k) C.live = { k: m.k, tok: [], board: null };
   const L = C.live;
@@ -1304,9 +1498,8 @@ function onDraw(m) {
 function onGal(m) {
   if (!C.st || m.rid !== C.st.rid) return;
   const old = C.gal[m.k];
-  if (old && !old.prov && old.tok.length >= m.tok.length) return;
-  C.gal[m.k] = { pid: m.pid, tok: m.tok, sk: m.sk };
-  thumbCache.delete(C.st.rid + ":" + m.k);
+  if (old && !old.prov && old.tok.length >= m.tok.length && (old.sab?.length || 0) >= (m.sab?.length || 0)) return;
+  C.gal[m.k] = { pid: m.pid, tok: m.tok, sab: m.sab, sk: m.sk };
   C.galDirty = true;
 }
 function leaveRoom(sendLeave) {
@@ -1321,15 +1514,18 @@ function leaveRoom(sendLeave) {
 }
 
 // ---- my drawing turn ----
+function myInputOpts() {
+  return C.st.twist === "oneline" ? { oneStroke: true, onStroke: () => setTimeout(() => { finishMyTurn(); render(); }, 500) } : {};
+}
 function startMyTurn(board) {
   const st = C.st;
   C.my = { rid: st.rid, k: st.k, board, tok: [], sent: 0, lastSnap: now(), snapLen: 0, fin: false };
-  board.enableInput((arr) => { if (C.my && C.my.board === board && !C.my.fin) C.my.tok.push(...arr); });
+  board.enableInput((arr) => { if (C.my && C.my.board === board && !C.my.fin) C.my.tok.push(...arr); }, myInputOpts());
   clearInterval(C.my.flushT);
   C.my.flushT = setInterval(flushMyTurn, 100);
 }
 function pubDraw(m) {
-  m.by = C.me.id;
+  m.by = m.sab ? "~" : C.me.id;
   C.conn?.pub(TOP(C.code) + "/d", m);
   if (C.isHost) hDraw(m);
 }
@@ -1355,6 +1551,63 @@ function finishMyTurn() {
   pubDraw({ rid: my.rid, k: my.k, fin: true, tok: my.tok });
   // send the final copy twice in case one gets lost
   setTimeout(() => { if (C.st && C.st.rid === my.rid) pubDraw({ rid: my.rid, k: my.k, fin: true, tok: my.tok }); }, 900);
+}
+
+// ---- sabotage (impostor + saboteur, once per round) ----
+const SAB_SECS = 8, SAB_INK = { add: 650, erase: 900 };
+function askSab() {
+  const st = C.st, pv = C.priv && C.priv.rid === st.rid ? C.priv : null;
+  if (!pv || !pv.canSab) return toast(t("noAction"));
+  if (C.sabUsedRid === st.rid) return toast(t("sabUsed"));
+  const k = st.k, rid0 = st.rid;
+  let m;
+  const go = (mode) => { m.remove(); if (C.st.k === k && C.st.rid === rid0) sendHost({ t: "sab", rid: rid0, k, mode }); };
+  m = modal(el("h2", {}, "😈 " + t("sabPick", { name: pName(st.order[k]) })),
+    el("button", { class: "btn imp", onclick: () => go("add") }, t("sabAdd")),
+    el("button", { class: "btn imp", onclick: () => go("erase") }, t("sabErase")),
+    el("button", { class: "btn ghost", onclick: () => m.remove() }, t("cancel")));
+}
+function startSab(m) {
+  const st = C.st;
+  if (!st || m.rid !== st.rid || m.k !== st.k || st.phase !== "draw") return;
+  C.sabUsedRid = m.rid;
+  C.mySab = { rid: m.rid, k: m.k, key: m.key, mode: m.mode, tok: [], sent: 0, lastSnap: now(), snapLen: 0, fin: false, endAt: now() + SAB_SECS * 1000, ink: 1 };
+  buzz(40);
+  attachSab();
+}
+// hook the sabotage input up to the overlay canvas on the current screen
+function attachSab() {
+  const S = C.mySab, ov = C.sabBoard;
+  if (!S || S.fin || !ov) return;
+  ov.load(S.tok);
+  ov.cv.style.pointerEvents = "auto";
+  ov.enableInput((arr) => { if (C.mySab === S && !S.fin) S.tok.push(...arr); },
+    { ink: SAB_INK[S.mode] * S.ink, onMove: (f) => { S.ink = f; const b = $("#sabInk"); if (b) b.style.width = f * 100 + "%"; }, onInk: () => finishSab() });
+  ov.size = S.mode === "erase" ? 2 : 1;
+  ov.tool = S.mode === "erase" ? "eraser" : "pen";
+  ov.color = 0;
+  clearInterval(S.flushT); S.flushT = setInterval(flushSab, 100);
+  C.updSab?.();
+}
+function flushSab() {
+  const S = C.mySab;
+  if (!S || S.fin) return;
+  if (S.tok.length > S.sent) { pubDraw({ rid: S.rid, k: S.k, sab: S.key, from: S.sent, tok: S.tok.slice(S.sent) }); S.sent = S.tok.length; }
+  if (now() - S.lastSnap > 2500 && S.snapLen !== S.tok.length) { S.lastSnap = now(); S.snapLen = S.tok.length; pubDraw({ rid: S.rid, k: S.k, sab: S.key, full: true, tok: S.tok }); }
+}
+function finishSab() {
+  const S = C.mySab;
+  if (!S || S.fin) return;
+  if (C.sabBoard) { C.sabBoard.stop?.(); C.sabBoard.cv.style.pointerEvents = "none"; }
+  flushSab();
+  S.fin = true; clearInterval(S.flushT);
+  pubDraw({ rid: S.rid, k: S.k, sab: S.key, fin: true, tok: S.tok });
+  setTimeout(() => pubDraw({ rid: S.rid, k: S.k, sab: S.key, fin: true, tok: S.tok }), 900);
+  // keep showing my own sabotage on this drawing
+  C.liveSab = { k: S.k, tok: S.tok.slice(), board: C.sabBoard };
+  if (C.sabBoard) C.sabBoard.k = S.k;
+  if (S.tok.length) toast(t("sabDoneMsg"));
+  C.updSab?.();
 }
 
 // ---- client timer loop ----
@@ -1390,6 +1643,11 @@ function tickFrame() {
     if (s <= 5 && s > 0) beep(st.order[st.k] === C.me?.id ? 880 : 600, 0.06, 0.08);
   }
   if (C.my && !C.my.fin && st.phase === "draw" && st.k === C.my.k && left <= 0) { finishMyTurn(); render(); }
+  if (C.mySab && !C.mySab.fin) {
+    const sl = Math.max(0, C.mySab.endAt - now());
+    const e = $("#sabTime"); if (e) e.textContent = Math.ceil(sl / 1000) + "s";
+    if (sl <= 0 || left <= 300) finishSab();
+  }
 }
 setInterval(clientTick, 150);
 
@@ -1435,10 +1693,13 @@ function showRules() {
   modal(el("h2", {}, t("howTo")), el("ol", { class: "rules" }, t("rules").map((r) => el("li", {}, r))), el("p", { class: "small muted" }, t("scoring")),
     el("button", { class: "btn ghost", onclick: (e) => e.target.closest(".modal").remove() }, t("close")));
 }
-function zoom(tok, key, title) {
-  modal(title ? el("h3", {}, title) : null, el("img", { src: drawingImg(tok, key) }),
+function zoomImg(url, title) {
+  modal(title ? el("h3", {}, title) : null, el("img", { src: url }),
     el("button", { class: "btn ghost", onclick: (e) => e.target.closest(".modal").remove() }, t("close")));
 }
+// gallery picture (drawing + any sabotage on top), cached by content size
+const galKey = (k, g) => C.st.rid + ":" + k + ":" + g.tok.length + ":" + (g.sab ? g.sab.length : 0);
+const galImg = (k, g) => drawingImg(g.tok, galKey(k, g), g.sab);
 const pName = (id) => C.st?.players.find((p) => p.id === id)?.name || "?";
 const pObj = (id) => C.st?.players.find((p) => p.id === id);
 
@@ -1571,7 +1832,7 @@ function peekBox() {
     if (!pv) { b.textContent = t("gettingSecret"); return; }
     b.innerHTML = "";
     if (pv.role === "imp") b.append(el("span", {}, "🕵️ ", el("b", {}, t("youImp").replace("🕵️ ", "")), pv.cat ? " · " + pv.cat : ""));
-    else b.append(el("span", {}, t("secretWord") + ": ", el("b", {}, pv.word), pv.cat ? " · " + pv.cat : ""));
+    else b.append(el("span", {}, pv.role === "sab" ? "😈 " : "", t("secretWord") + ": ", el("b", {}, pv.word), pv.cat ? " · " + pv.cat : ""));
   };
   const hide = () => { b.textContent = t("holdPeek"); };
   b.addEventListener("pointerdown", show); b.addEventListener("pointerup", hide); b.addEventListener("pointerleave", hide); b.addEventListener("pointercancel", hide);
@@ -1579,23 +1840,26 @@ function peekBox() {
   return b;
 }
 function galleryStrip() {
-  const st = C.st;
   const box = el("div", { class: "gal" });
   const fill = () => {
     box.innerHTML = "";
     const n = C.st.done;
     if (!n) { box.append(el("p", { class: "muted small" }, t("noDrawings"))); return; }
     for (let k = n - 1; k >= 0; k--) {
-      const g = C.gal[k], pid = C.st.order[k], p = pObj(pid);
-      const key = C.st.rid + ":" + k + ":" + (g ? g.tok.length : 0);
-      box.append(el("div", { class: "thumb", onclick: () => g && !g.sk && zoom(g.tok, key, p?.name) },
-        g && !g.sk ? el("img", { src: drawingImg(g.tok, key), alt: "" }) : el("div", { class: "ph" }, g?.sk ? "💤" : "⏳"),
+      const g = C.gal[k], p = pObj(C.st.order[k]);
+      box.append(el("div", { class: "thumb", onclick: () => g && !g.sk && zoomImg(galImg(k, g), p?.name) },
+        g && !g.sk ? el("img", { src: galImg(k, g), alt: "" }) : el("div", { class: "ph" }, g?.sk ? "💤" : "⏳"),
         el("span", {}, (p?.name || "?") + (g?.sk ? " · " + t("skipped") : ""))));
     }
   };
   fill();
   C.updGal = fill;
   return el("div", { class: "card" }, el("h3", {}, t("drawingsSoFar")), box);
+}
+const twistLabel = (tw) => t("twists")[tw] || "";
+function twistBanner(tw) {
+  if (!tw || tw === "none") return null;
+  return el("div", { class: "twist" }, el("b", {}, t("twistNow", { t: twistLabel(tw) })), el("div", { class: "small" }, t("twistDesc")[tw] || ""));
 }
 
 // ---- lobby ----
@@ -1615,15 +1879,24 @@ function lobbyScreen() {
     const s = C.st.set;
     setBox.innerHTML = "";
     setBox.append(el("h3", {}, "⚙️ " + t("settings")));
+    const adult = PACKS[s.cat]?.adult ? el("p", { class: "banner" }, t("adultNote")) : null;
     if (host) {
       const ch = (fn) => { fn(H.st.set); hPublish(); };
       const sel = el("select", { class: "t", onchange: (e) => ch((x) => { x.cat = e.target.value; }) },
-        el("option", { value: "mix" }, "🎲 " + t("mix")),
-        CATS.map((c) => el("option", { value: c.id }, c.e + " " + c[LANG])),
+        el("optgroup", { label: t("modes") },
+          el("option", { value: "mix" }, "🎲 " + t("mix")),
+          MODES.map((m) => el("option", { value: m.id }, m.e + " " + m[LANG]))),
+        el("optgroup", { label: t("cats") }, CATS.map((c) => el("option", { value: c.id }, c.e + " " + c[LANG]))),
         el("option", { value: "custom" }, "✏️ " + t("custom")));
       sel.value = s.cat;
+      const tw = el("select", { class: "t", onchange: (e) => ch((x) => { x.twist = e.target.value; }) },
+        TWISTS.map((k) => el("option", { value: k }, twistLabel(k))));
+      tw.value = s.twist || "none";
       setBox.append(el("div", { class: "set" },
-        el("span", { class: "k" }, t("category")), sel,
+        el("span", { class: "k" }, t("category")), sel, adult,
+        el("span", { class: "k" }, "😈 " + t("sabotage")), seg([[true, t("on")], [false, t("off")]], !!s.sab, (v) => ch((x) => { x.sab = v; })),
+        el("span", { class: "small muted" }, t("sabHint")),
+        el("span", { class: "k" }, "🌀 " + t("twist")), tw,
         el("span", { class: "k" }, t("drawTime")), seg([[20, "20s"], [30, "30s"], [45, "45s"], [60, "60s"]], s.time, (v) => ch((x) => { x.time = v; })),
         el("span", { class: "k" }, t("turns")), seg([[0, t("auto")], [1, "1"], [2, "2"]], s.laps, (v) => ch((x) => { x.laps = v; })),
         el("span", { class: "k" }, t("rounds")), seg([[3, "3"], [5, "5"], [8, "8"], [0, "∞"]], s.rounds, (v) => ch((x) => { x.rounds = v; })),
@@ -1642,11 +1915,12 @@ function lobbyScreen() {
         setBox.append(el("p", { class: "small muted" }, t("customHint")), ta, cnt);
       }
     } else {
-      const c = CATS.find((x) => x.id === s.cat);
       setBox.append(el("div", { class: "summary" },
-        el("span", {}, s.cat === "mix" ? "🎲 " + t("mix") : s.cat === "custom" ? "✏️ " + t("custom") : c.e + " " + c[LANG]),
+        el("span", {}, packLabel(s.cat)),
+        el("span", {}, "😈 " + t("sabotage") + ": " + (s.sab ? t("on") : t("off"))),
+        s.twist && s.twist !== "none" ? el("span", {}, "🌀 " + twistLabel(s.twist)) : null,
         el("span", {}, "⏱ " + s.time + "s"), el("span", {}, "🔁 " + t("turns") + ": " + (s.laps || t("auto"))),
-        el("span", {}, "🏁 " + t("rounds") + ": " + (s.rounds || "∞")), el("span", {}, "🕵️ " + t("hint") + ": " + (s.hint ? t("on") : t("off")))));
+        el("span", {}, "🏁 " + t("rounds") + ": " + (s.rounds || "∞")), el("span", {}, "🕵️ " + t("hint") + ": " + (s.hint ? t("on") : t("off")))), adult);
     }
   };
   fillSet();
@@ -1676,7 +1950,7 @@ function revealScreen() {
   C.revealKey = "";
   const status = el("p", { class: "center muted" });
   const ctrl = el("div", {});
-  const kids = [el("h2", { class: "center" }, roundLabel())];
+  const kids = [el("h2", { class: "center" }, roundLabel()), twistBanner(st.twist)];
   if (C.tv || !st.parts.includes(C.me.id)) {
     kids.push(el("div", { class: "card center" }, el("h2", {}, "🤫 " + (LANG === "es" ? "¡Revisen su palabra secreta!" : "Everyone, check your secret word!")),
       !C.tv ? el("p", {}, t("newPlayer")) : null));
@@ -1689,8 +1963,12 @@ function revealScreen() {
       if (!pv) return;
       C.seen = st.rid;
       card.innerHTML = "";
-      if (pv.role === "imp") card.append(el("div", { class: "word" }, t("youImp")), el("div", { class: "lbl" }, pv.cat ? t("category2", { c: pv.cat }) : t("noCat")), el("p", {}, t("impTip")));
-      else card.append(el("div", { class: "lbl" }, t("secretWord")), el("div", { class: "word" }, pv.word), pv.cat ? el("div", { class: "lbl" }, t("category2", { c: pv.cat })) : null, el("p", {}, t("crewTip")));
+      const add = (...xs) => card.append(...xs.filter(Boolean));
+      if (pv.role === "imp") add(el("div", { class: "word" }, t("youImp")), el("div", { class: "lbl" }, pv.cat ? t("category2", { c: pv.cat }) : t("noCat")),
+        el("p", {}, t("impTip")), pv.canSab ? el("p", { class: "lbl" }, "😈 " + t("impSabTip")) : null);
+      else add(pv.role === "sab" ? el("div", { class: "role" }, t("youSab")) : null,
+        el("div", { class: "lbl" }, t("secretWord")), el("div", { class: "word" }, pv.word), pv.cat ? el("div", { class: "lbl" }, t("category2", { c: pv.cat })) : null,
+        el("p", {}, pv.role === "sab" ? t("sabTip") : t("crewTip")));
       readyBtn.disabled = false;
     };
     card.addEventListener("pointerdown", show);
@@ -1722,26 +2000,38 @@ function revealScreen() {
 function drawScreen() {
   const st = C.st, drawer = st.order[st.k], mine = drawer === C.me.id && !C.tv;
   const dp = pObj(drawer);
-  const cv = el("canvas", {});
-  const wrap = el("div", { class: "boardwrap" + (mine ? " mine" : "") }, cv);
-  const board = new Board(cv);
+  const cv = el("canvas", {}), ovc = el("canvas", { class: "sablayer" });
+  const wrap = el("div", { class: "boardwrap" + (mine ? " mine" : "") }, cv, ovc);
+  const board = new Board(cv), overlay = new Board(ovc, true);
+  overlay.k = st.k;
+  C.sabBoard = overlay;
+  // sabotage layer for this drawing (from someone else, or my own)
+  if (C.mySab && C.mySab.rid === st.rid && C.mySab.k === st.k) overlay.load(C.mySab.tok);
+  else {
+    if (!C.liveSab || C.liveSab.k !== st.k) C.liveSab = { k: st.k, tok: [], board: null };
+    overlay.load(C.liveSab.tok);
+    C.liveSab.board = overlay;
+  }
   const nxt = st.order[st.k + 1];
   const who = el("div", { class: "who" }, mine ? t("yourTurn") : t("isDrawing", { name: dp?.name || "?" }));
   const top = el("div", {},
-    el("div", { class: "muted small" }, roundLabel() + " · " + t("turnN", { n: st.k + 1, m: st.order.length })),
+    el("div", { class: "muted small" }, roundLabel() + " · " + t("turnN", { n: st.k + 1, m: st.order.length }) +
+      (st.twist && st.twist !== "none" ? " · " + twistLabel(st.twist) : "")),
     el("div", { class: "turnbar" }, mine ? null : avatar(dp), who, el("div", { class: "timer" }, "")),
     el("div", { class: "tbar" }, el("i")),
     el("div", { class: "order" }, st.order.map((id, i) => avatar(pObj(id) || { name: "?", col: 0 }, i === st.k ? "now" : i < st.k ? "done" : ""))),
     nxt && !mine ? el("div", { class: "small muted" }, nxt === C.me.id ? "⚡ " + t("youNext") : t("upNext", { name: pName(nxt) })) : null);
   const kids = [];
   let tools = null;
+  const oneLine = st.twist === "oneline";
   if (mine) {
     if (C.my && C.my.rid === st.rid && C.my.k === st.k) {
       // screen rebuilt during my turn: keep the drawing and tools
       const old = C.my.board;
       board.load(C.my.tok);
-      if (!C.my.fin) {
-        board.enableInput((arr) => { if (C.my && C.my.board === board && !C.my.fin) C.my.tok.push(...arr); });
+      const usedLine = oneLine && C.my.tok.includes(OP_E);
+      if (!C.my.fin && !usedLine) {
+        board.enableInput((arr) => { if (C.my && C.my.board === board && !C.my.fin) C.my.tok.push(...arr); }, myInputOpts());
         board.tool = old.tool || "pen"; board.color = old.color || 0; board.size = old.size ?? 1;
         C.my.board = board;
       }
@@ -1753,6 +2043,7 @@ function drawScreen() {
       else sendHost({ t: "resume", rid: st.rid, k: st.k }); // in case I reloaded mid-turn
     }
     const done = C.my.fin;
+    if (st.twist === "blind" && !done) wrap.append(el("div", { class: "over blind" }, t("blindCover")));
     if (done) wrap.append(el("div", { class: "over" }, "✓"));
     const tb = (id, icon, title, fn) => el("button", { "data-t": id, title, onclick: fn }, icon);
     const sel = () => {
@@ -1761,7 +2052,7 @@ function drawScreen() {
       tools.querySelectorAll(".sizes button").forEach((b, i) => b.classList.toggle("on", i === board.size));
     };
     tools = el("div", {},
-      el("div", { class: "tools" },
+      oneLine ? el("p", { class: "hint" }, t("oneLineTip")) : el("div", { class: "tools" },
         tb("pen", "✏️", t("tools").pen, () => { board.tool = "pen"; sel(); }),
         tb("fill", "🪣", t("tools").fill, () => { board.tool = "fill"; sel(); }),
         tb("eraser", "🧽", t("tools").eraser, () => { board.tool = "eraser"; sel(); }),
@@ -1769,7 +2060,7 @@ function drawScreen() {
         el("button", { title: t("tools").clear, onclick: () => board.act("clear") }, "🗑️")),
       el("div", { class: "colors" }, PAL.map((c, i) => el("button", { style: `background:${c}`, "aria-label": c, onclick: () => { board.color = i; if (board.tool === "eraser") board.tool = "pen"; sel(); } }))),
       el("div", { class: "sizes" }, SIZES.map((s, i) => el("button", { onclick: () => { board.size = i; sel(); } }, el("i", { style: `width:${Math.max(6, s * 0.55)}px;height:${Math.max(6, s * 0.55)}px` })))),
-      el("button", { class: "btn teal", disabled: done || null, onclick: () => { finishMyTurn(); wrap.append(el("div", { class: "over" }, "✓")); tools.querySelector(".btn.teal").disabled = true; } }, t("done")));
+      el("button", { class: "btn teal", disabled: done || null, onclick: () => { finishMyTurn(); render(); } }, t("done")));
     sel();
   } else {
     if (!C.live || C.live.k !== st.k) C.live = { k: st.k, tok: [], board: null };
@@ -1777,19 +2068,38 @@ function drawScreen() {
     board.k = st.k;
     C.live.board = board;
   }
+  // 🎭 secret action: every player sees it, so having it gives nothing away
+  const sabBox = el("div", {});
+  const canSee = st.sabOn && !mine && !C.tv && st.parts.includes(C.me.id);
+  const fillSab = () => {
+    sabBox.innerHTML = "";
+    const S = C.mySab;
+    if (S && !S.fin && S.rid === st.rid && S.k === st.k) {
+      sabBox.append(el("div", { class: "sabbar" },
+        el("div", { class: "row" }, el("b", { style: "flex:2" }, t("sabGo")), el("span", { id: "sabTime", style: "flex:0;min-width:34px;text-align:right" }, "")),
+        el("div", { class: "tbar sab" }, el("i", { id: "sabInk", style: `width:${S.ink * 100}%` })),
+        S.mode === "add" ? el("div", { class: "colors" }, PAL.slice(0, 8).map((c, i) => el("button", { style: `background:${c}`, class: overlay.color === i ? "on" : "",
+          onclick: (e) => { overlay.color = i; sabBox.querySelectorAll(".colors button").forEach((b, j) => b.classList.toggle("on", j === i)); } }))) : null,
+        el("button", { class: "btn imp sm", onclick: () => finishSab() }, t("sabStop"))));
+    } else if (canSee) sabBox.append(el("button", { class: "btn ghost sm", onclick: askSab }, t("secretAction")));
+  };
+  C.updSab = fillSab;
+  fillSab();
+  if (C.mySab && !C.mySab.fin && C.mySab.rid === st.rid && C.mySab.k === st.k) attachSab();
   if (C.tv) {
     screen(el("div", { class: "drawgrid" }, el("div", {}, top, wrap), el("div", {}, galleryStrip())));
   } else {
     kids.push(top, wrap);
     if (tools) kids.push(tools);
-    kids.push(peekBox());
+    kids.push(sabBox, peekBox());
     if (!st.parts.includes(C.me.id)) kids.push(el("p", { class: "hint" }, t("newPlayer")));
     kids.push(galleryStrip());
     screen(...kids);
   }
   C.upd = () => {
     C.updGal?.();
-    if (mine && C.my?.fin && !wrap.querySelector(".over")) {
+    if (mine && C.my?.fin && !wrap.querySelector(".over:not(.blind)")) {
+      wrap.querySelector(".blind")?.remove();
       wrap.append(el("div", { class: "over" }, "⏰ " + t("timesUp")));
       const b = tools?.querySelector(".btn.teal"); if (b) b.disabled = true;
     }
@@ -1798,45 +2108,56 @@ function drawScreen() {
 
 // ---- vote ----
 function voteScreen() {
-  const st = C.st, iAmIn = st.parts.includes(C.me.id) && !C.tv;
+  const st = C.st, iAmIn = st.parts.includes(C.me.id) && !C.tv, vr2 = st.vr === 2;
   const grid = el("div", { class: "vgrid" });
   const status = el("p", { class: "center muted" });
   const ctrl = el("div", {});
-  let myVote = C.myVote && C.myVote.rid === st.rid && C.myVote.vr === st.vr ? C.myVote.to : null;
+  const mineBox = el("div", { class: "myvotes" });
+  if (!C.myVotes || C.myVotes.rid !== st.rid) C.myVotes = { rid: st.rid, vr: st.vr, imp: null, sab: null, best: null };
+  if (C.myVotes.vr !== st.vr) { C.myVotes.vr = st.vr; C.myVotes.imp = null; }
+  const V = C.myVotes;
+  const kinds = vr2 ? ["imp"] : ["imp", ...(st.sabRole ? ["sab"] : []), "best"];
+  const label = { imp: t("vImp"), sab: t("vSab"), best: t("vBest") };
+  const fillMine = () => {
+    mineBox.innerHTML = "";
+    if (!iAmIn) return;
+    mineBox.append(el("b", {}, t("myVotes") + " "), ...kinds.map((kd) => el("span", { class: "mv " + kd + (V[kd] ? " set" : "") }, label[kd].split(" ")[0] + " " + (V[kd] ? pName(V[kd]) : "—"))));
+  };
   const fillGrid = () => {
     grid.innerHTML = "";
-    for (const id of C.st.cands) {
+    for (const id of vr2 ? C.st.cands : C.st.parts) {
       const p = pObj(id);
       const ks = C.st.order.map((x, k) => (x === id ? k : -1)).filter((k) => k >= 0);
       const pics = el("div", { class: "pics" + (ks.length === 1 ? " one" : "") }, ks.map((k) => {
-        const g = C.gal[k], key = C.st.rid + ":" + k + ":" + (g ? g.tok.length : 0);
-        return g && !g.sk ? el("img", { src: drawingImg(g.tok, key), onclick: () => zoom(g.tok, key, p?.name) }) : el("div", { class: "ph" }, g?.sk ? "💤" : "⏳");
+        const g = C.gal[k];
+        return g && !g.sk ? el("img", { src: galImg(k, g), onclick: () => zoomImg(galImg(k, g), p?.name) }) : el("div", { class: "ph" }, g?.sk ? "💤" : "⏳");
       }));
       const isMe = id === C.me.id;
-      grid.append(el("div", { class: "vcard" + (myVote === id ? " pick" : "") },
+      const btns = iAmIn ? (isMe ? [el("div", { class: "you" }, t("yourCard"))] :
+        kinds.filter((kd) => kd !== "imp" || C.st.cands.includes(id)).map((kd) => el("button", { class: "vb " + kd + (V[kd] === id ? " on" : ""),
+          onclick: () => { V[kd] = id; sendHost({ t: "vote", to: id, kind: kd }); beep(600, .08); fillGrid(); fillMine(); } }, label[kd]))) : [];
+      grid.append(el("div", { class: "vcard" + (Object.values({ a: V.imp, b: V.sab, c: V.best }).includes(id) ? " pick" : "") },
         el("div", { class: "nm" }, avatar(p), el("span", {}, p?.name || "?"), C.st.voted.includes(id) ? el("span", { class: "small muted" }, "✓") : null),
-        pics,
-        iAmIn ? el("button", { class: "btn" + (myVote === id ? "" : " ghost"), disabled: isMe || null,
-          onclick: () => { myVote = id; C.myVote = { rid: C.st.rid, vr: C.st.vr, to: id }; sendHost({ t: "vote", to: id }); beep(600, .08); fillGrid(); } },
-          isMe ? t("yourCard") : myVote === id ? t("voted") : t("vote")) : null));
+        pics, btns));
     }
   };
-  fillGrid();
-  screen(el("h2", { class: "center" }, t("voteTitle")),
-    el("p", { class: "center" }, st.vr === 2 ? el("b", {}, t("revote", { names: st.cands.map(pName).join(", ") })) : t("voteSub")),
+  fillGrid(); fillMine();
+  screen(el("h2", { class: "center" }, vr2 ? t("voteTitle") : t("voteTime")),
+    vr2 ? el("p", { class: "center" }, el("b", {}, t("revote", { names: st.cands.map(pName).join(", ") })))
+      : el("p", { class: "center small" }, t("voteSub") + " " + (kinds.length > 1 ? t("voteLegend") : "")),
     !iAmIn && !C.tv ? el("p", { class: "hint" }, t("notInRound")) : null,
-    status, ctrl, grid, peekBox());
+    mineBox, status, ctrl, grid, peekBox());
   C.upd = () => {
     const s = C.st;
     const voters = s.parts.filter((id) => pObj(id)?.on || s.voted.includes(id));
     status.textContent = "🗳️ " + t("votesIn", { n: s.voted.length, m: voters.length });
     ctrl.innerHTML = "";
-    if (C.isHost && s.voted.length) ctrl.append(el("button", { class: "btn ghost", onclick: () => hTally() }, "📣 " + t("revealVotes")));
+    if (C.isHost && Object.keys(H.sec?.votes || {}).length) ctrl.append(el("button", { class: "btn ghost", onclick: () => hTally() }, "📣 " + t("revealVotes")));
     refresh();
   };
   let gk = "";
   const refresh = () => {
-    const k = C.st.voted.join() + "|" + C.st.cands.map((id) => C.st.order.map((x, i) => (x === id ? (C.gal[i]?.tok.length ?? -1) : "")).join()).join(";");
+    const k = C.st.voted.join() + "|" + C.st.order.map((x, i) => (C.gal[i] ? C.gal[i].tok.length + "/" + (C.gal[i].sab?.length || 0) : "-")).join();
     if (k !== gk) { gk = k; fillGrid(); }
   };
   C.updGal = refresh;
@@ -1869,13 +2190,32 @@ function resultScreen() {
     el("div", {}, t("wordWas") + ":"), el("div", { class: "w" }, r.word))];
   if (r.guessed && r.pick != null && r.choices) kids.push(el("p", { class: "center" }, t("guessed", { name: impName, w: r.choices[r.pick] }) + (r.guessOk ? " ✅" : " ❌")));
   else if (r.caught === r.imp && !r.aborted) kids.push(el("p", { class: "center muted" }, t("noGuess", { name: impName })));
+  if (r.sab && !r.aborted) kids.push(el("div", { class: "reveal sabr" }, el("div", { class: "big", style: "font-size:24px" }, t("sabWas", { name: pName(r.sab.id) })),
+    el("div", {}, !r.sab.used ? t("sabLazy") : r.sab.caught ? t("sabCaught") : t("sabEscaped"))));
+  if (r.best && r.best.length) kids.push(el("div", { class: "card center" }, el("h3", {}, t("bestWas", { names: r.best.map(pName).join(", ") })),
+    el("div", { class: "gal", style: "justify-content:center" }, st.order.map((x, k) => [x, k]).filter(([x, k]) => r.best.includes(x) && C.gal[k] && !C.gal[k].sk)
+      .map(([x, k]) => el("div", { class: "thumb", onclick: () => zoomImg(galImg(k, C.gal[k]), pName(x)) }, el("img", { src: galImg(k, C.gal[k]) }), el("span", {}, pName(x)))))));
   if (r.imp === C.me.id && !C.tv && !r.aborted) { r.caught === r.imp && !r.guessOk ? buzz(300) : buzz([80, 60, 80, 60, 80]); }
+  // sabotaged drawings: before / after
+  for (const sb of r.sabs || []) {
+    const g = C.gal[sb.k];
+    if (!g || g.sk) continue;
+    const before = drawingImg(g.tok, galKey(sb.k, g) + ":base");
+    kids.push(el("div", { class: "card" }, el("h3", {}, "😈 " + t("sabBy", { name: pName(g.pid), role: sb.role === "imp" ? t("roleImp") : t("roleSab") })),
+      el("div", { class: "row" },
+        el("div", { class: "thumb", style: "width:auto", onclick: () => zoomImg(before) }, el("img", { src: before, style: "width:100%;height:auto" }), el("span", {}, t("before"))),
+        el("div", { class: "thumb", style: "width:auto", onclick: () => zoomImg(galImg(sb.k, g)) }, el("img", { src: galImg(sb.k, g), style: "width:100%;height:auto" }), el("span", {}, t("after"))))));
+  }
   // impostor's drawings
   const ks = st.order.map((x, k) => (x === r.imp ? k : -1)).filter((k) => k >= 0 && C.gal[k] && !C.gal[k].sk);
   if (ks.length) kids.push(el("div", { class: "card" }, el("h3", {}, t("impDrawings")),
-    el("div", { class: "gal" }, ks.map((k) => { const g = C.gal[k], key = st.rid + ":" + k + ":" + g.tok.length; return el("div", { class: "thumb", onclick: () => zoom(g.tok, key, impName) }, el("img", { src: drawingImg(g.tok, key) })); }))));
-  if (!r.aborted && Object.keys(r.votes || {}).length) kids.push(el("div", { class: "card votes" }, el("h3", {}, t("votesList")),
-    st.parts.map((id) => el("div", {}, el("b", {}, pName(id)), " → ", r.votes[id] ? pName(r.votes[id]) + (r.votes[id] === r.imp ? " 🎯" : "") : el("span", { class: "muted" }, t("noVote"))))));
+    el("div", { class: "gal" }, ks.map((k) => el("div", { class: "thumb", onclick: () => zoomImg(galImg(k, C.gal[k]), impName) }, el("img", { src: galImg(k, C.gal[k]) }))))));
+  // how everyone voted
+  if (!r.aborted && Object.keys(r.votes || {}).length + Object.keys(r.bestVotes || {}).length) kids.push(el("div", { class: "card votes" }, el("h3", {}, t("votesHead")),
+    st.parts.map((id) => el("div", {}, el("b", {}, pName(id) + ": "),
+      "🕵️ ", r.votes[id] ? pName(r.votes[id]) + (r.votes[id] === r.imp ? " 🎯" : "") : el("span", { class: "muted" }, "—"),
+      r.sab ? [" · 😈 ", r.sabVotes?.[id] ? pName(r.sabVotes[id]) + (r.sabVotes[id] === r.sab.id ? " 🎯" : "") : el("span", { class: "muted" }, "—")] : null,
+      " · ⭐ ", r.bestVotes?.[id] ? pName(r.bestVotes[id]) : el("span", { class: "muted" }, "—")))));
   kids.push(el("div", { class: "card" }, el("h3", {}, "🏆 " + t("scores")), scoreList(r.gains)));
   if (C.isHost) {
     const last = st.set.rounds && st.round >= st.set.rounds;
